@@ -1,0 +1,72 @@
+<div class="modal custom-modal fade bank-details" id="add_items" role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="form-header text-start mb-0">
+            <h4 class="mb-0">Create New Pro</h4>
+          </div>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="bank-inner-details">
+            <form method="post">
+              {% csrf_token %}
+              <div class="row">
+                <div class="col-lg-6 col-md-6">
+                  <div class="form-group">
+                    <label>Product Name</label>
+                    {{ form.name }}
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                  <div class="form-group">
+                    <label>HSN No</label>
+                    {{ form.hsn_no }}
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                  <div class="form-group">
+                    <label>MRP</label>
+                    {{ form.mrp }}
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                  <div class="form-group">
+                    <label>Purchase Price</label>
+                    {{ form.purchase_price }}
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                  <div class="form-group">
+                    <label>SGST</label>
+                    {{ form.sgst_rate }}
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                  <div class="form-group">
+                    <label>CGST</label>
+                    {{ form.cgst_rate }}
+                  </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                  <div class="form-group">
+                    <label>Stock</label>
+                    {{ form.stock_quantity }}
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <div class="bank-details-btn">
+                  <a href="javascript:void(0);" data-bs-dismiss="modal" class="btn bank-cancel-btn me-2">Cancel</a>
+                  <button type="submit" class="btn bank-save-btn">Save Item</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
