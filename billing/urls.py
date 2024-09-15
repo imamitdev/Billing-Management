@@ -12,5 +12,8 @@ urlpatterns = [
     path('customers/new/', views.customer_create, name='customer_create'),
     path('customers/edit/<int:customer_id>/', views.update_customer, name='update_customer'),
 
+    path('addInovice/', views.add_invoice ,name='add_invoice'),
+
+    path('invoices/', views.invoice_list, name='invoice_list'),
 
 ]

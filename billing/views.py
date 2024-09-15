@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product,Customer
-from .forms import ProductForm,CustomerForm
+from .models import Product,Customer,Invoice,InvoiceItem
+from django.forms import formset_factory
+
+
+from .forms import ProductForm,CustomerForm,InvoiceForm,InvoiceItemForm,InvoiceItemFormset
 from django.contrib import messages
+from django.http import JsonResponse
 
 def product_list(request):
     products = Product.objects.all()
@@ -77,3 +81,40 @@ def update_customer(request,customer_id):
     else:
         form = CustomerForm(instance=customer)
     return render(request, 'billing/customer_form.html', {'form': form})
+
+def add_invoice(request):
+    InvoiceItemFormSet = formset_factory(InvoiceItemForm, extra=1)
+    
+    if request.method == 'POST':
+        invoice_form = InvoiceForm(request.POST)
+        formset = InvoiceItemFormSet(request.POST)
+        
+        if invoice_form.is_valid() and formset.is_valid():
+            invoice = invoice_form.save(commit=False)
+            invoice.save()
+            
+            for form in formset:
+                if form.is_valid():
+                    invoice_item = form.save(commit=False)
+                    invoice_item.invoice = invoice
+                    invoice_item.save()
+            
+            return redirect('invoice_list')  # Redirect after saving
+            
+    else:
+        invoice_form = InvoiceForm()
+        formset = InvoiceItemFormSet()
+    
+    return render(request, 'billing/addInvoice.html', {
+        'invoice_form': invoice_form,
+        'item_forms': formset,
+        'products': Product.objects.all()  # Pass your products context
+    })
+
+
+
+
+
+def invoice_list(request):
+    invoices = Invoice.objects.all()
+    return render(request,'billing/Invoices.html', {'invoices': invoices})
