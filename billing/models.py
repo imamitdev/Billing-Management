@@ -31,6 +31,8 @@ class Invoice(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE,null=True)
     date = models.DateField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_sgst=models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_cgst=models.DecimalField(max_digits=10, decimal_places=2, default=0)
     paid_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     created_date = models.DateTimeField(default=timezone.now)  # Use default

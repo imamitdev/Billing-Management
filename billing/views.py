@@ -103,13 +103,16 @@ def create_invoice(request):
             data = json.loads(request.body)
             customer_id = data.get('customer')
             manual_amount = Decimal(data.get('manual_amount', 0))  # Fixed this line
+            total_amount = Decimal(data.get('total_amount', 0))  # Fixed this line
+            total_sgst = Decimal(data.get('total_sgst', 0))  # Fixed this line
+            total_cgst = Decimal(data.get('total_cgst', 0))  # Fixed this line
 
+            print(total_amount)
             items = data.get('items', [])
 
             # Get the customer and create the invoice
             customer = get_object_or_404(Customer, id=customer_id)
-            invoice = Invoice.objects.create(customer=customer, total_amount=0, paid_amount=manual_amount)
-            total_amount = Decimal('0.00')
+            invoice = Invoice.objects.create(customer=customer, total_amount=total_amount, paid_amount=manual_amount,total_sgst=total_sgst,total_cgst=total_cgst)
 
             # Create invoice items
             for item in items:
@@ -132,8 +135,6 @@ def create_invoice(request):
                     sgst=product.sgst_rate,
                     cgst=product.cgst_rate
                 )
-                total_amount += amount
-            invoice.total_amount = total_amount
             invoice.paid_amount = float(manual_amount)
 
             invoice.save()
@@ -151,7 +152,8 @@ def invoice_list(request):
     total_invoice_amount = invoices.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
 
     paid_invoices = invoices.filter(total_amount=F('paid_amount')).count()  # Fully paid invoices
-    paid_invoice_amount = invoices.filter(total_amount=F('paid_amount')).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    paid_invoice_amount = invoices.aggregate(Sum('paid_amount'))['paid_amount__sum'] or 0
+
 
     unpaid_invoices = invoices.filter(total_amount__gt=F('paid_amount')).count()  # Unpaid invoices
     unpaid_invoice_amount = invoices.filter(total_amount__gt=F('paid_amount')).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
@@ -176,6 +178,7 @@ def invoice_list(request):
 def get_invoice(request,id):
     invoices = get_object_or_404(Invoice, id=id)
     invoice_items = InvoiceItem.objects.filter(invoice=invoices)
+    
     
 
     context={

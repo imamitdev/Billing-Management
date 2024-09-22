@@ -214,11 +214,18 @@
     // Handle form submission
     $('#invoice-form').on('submit', function(event) {
       event.preventDefault(); // Prevent default form submission
+      const totalAmount = parseFloat($('#total-amount').text().replace('$', '')) || 0; 
+      const totalSGST = parseFloat($('#sgst-amount').text().replace('$', '')) || 0; 
+      const totalCSGT = parseFloat($('#cgst-amount').text().replace('$', '')) || 0; 
 
       // Serialize form data
       const formData = {
         customer: $('#customer-select').val(),
         manual_amount: parseFloat($('#manual_amount').val() || 0).toFixed(2),
+        total_amount: totalAmount.toFixed(2),  // Include total amount
+        total_sgst: totalSGST.toFixed(2),  // Include total amount
+        total_cgst: totalCSGT.toFixed(2),  // Include total amount
+
 
         items: []
       };
