@@ -1,0 +1,608 @@
+{% extends 'base.html' %}  
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+  <div class="content container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-xl-8">
+        <div class="text-md-end">
+          <div class="btn-group btn-group-sm d-print-none mb-4">
+            <a
+              href="javascript:window.print()"
+              class="btn btn-white text-black-50"
+              ><i class="fa fa-print"></i> Print</a
+            >
+            <a href="" class="btn btn-white text-black-50 shadow-none"
+              ><i class="fa fa-download"></i> Download</a
+            >
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="invoice-item">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="invoice-logo">
+                    <img src="{% static 'assets/img/logo.png' %}" alt="logo" />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <p class="invoice-details">
+                    <strong>Order:</strong> #{{invoices.id}} <br />
+                    <strong>Issued:</strong> {{invoices.created_date}}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="invoice-item">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="invoice-info">
+                    <strong class="customer-text">Invoice From</strong>
+                    <p class="invoice-details invoice-details-two">
+                      Darren Elder <br />
+                      806 Twin Willow Lane, Old Forge,<br />
+                      Newyork, USA <br />
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="invoice-info invoice-info2">
+                    <strong class="customer-text">Invoice To</strong>
+                    <p class="invoice-details">
+                      {{invoices.customer.address}}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr class="mt-0" />
+
+     
+
+            <div class="invoice-item invoice-table-wrap">
+              <h5></h5>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="table-responsive">
+                    <table class="invoice-table table table-border mb-0">
+                      <thead>
+                        <tr>
+                          <th class="w-75">Product</th>
+                          <th class="text-end">Quantity</th>
+                          <th class="text-end">Price</th>
+                          <th class="text-end">Amount</th>
+
+                          <th class="text-end">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                       
+                       {% for item in invoice_item %}
+                       <tr>
+                        <td class="w-50">{{item.product.name}}</td>
+                        <td class="text-end">{{item.quantity}}</td>
+                        <td class="text-end">{{item.price}}</td>
+                        <td class="text-end">{{item.amount}}</td>
+
+                        <td class="text-end">{{item.total_price}}</td>
+                      </tr>
+                       {% endfor %}
+                        
+                       
+                   
+            
+                        <tr>
+                          <td
+                            colspan="4"
+                            class="text-end text-muted border-bottom-0"
+                          >
+                            Subtotal
+                          </td>
+                          <td class="text-end border-bottom-0">$1,800</td>
+                        </tr>
+                        <tr>
+                          <td
+                            colspan="4"
+                            class="text-end text-muted border-bottom-0"
+                          >
+                            Tax
+                          </td>
+                          <td class="text-end border-bottom-0">$200</td>
+                        </tr>
+                        <tr>
+                          <td colspan="4" class="text-end text-muted">
+                            Discount (11%)
+                          </td>
+                          <td class="text-end">$100</td>
+                        </tr>
+                      </tbody>
+                      <tfoot class="border-bottom border-1">
+                        <tr>
+                          <th colspan="3" class="text-end font-weight-600">
+                            Total
+                          </th>
+                          <th class="text-end font-weight-600">$2,000</th>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="invoice-sign text-end py-5">
+              <img
+                class="img-fluid d-inline-block"
+                src="assets/img/signature.png"
+                alt="sign"
+              />
+              <span class="d-block">Digital Signature</span>
+            </div>
+            <hr />
+            <div class="invoice-terms">
+              <h6>Notes:</h6>
+              <p class="mb-0">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
+                sed dictum ligula, cursus blandit risus. Maecenas eget metus non
+                tellus dignissim aliquam ut a ex. Maecenas sed vehicula dui, ac
+                suscipit lacus.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="right-side-views">
+  <ul class="sticky-sidebar siderbar-view">
+    <li class="sidebar-icons">
+      <a
+        class="toggle tipinfo open-layout open-siderbar"
+        href="#"
+        data-toggle="tooltip"
+        data-placement="left"
+        data-bs-original-title="Tooltip on left"
+      >
+        <div class="tooltip-five">
+          <i data-feather="layout" class="feather-five"></i>
+          <span class="tooltiptext">Check Layout</span>
+        </div>
+      </a>
+    </li>
+    <li class="sidebar-icons">
+      <a
+        class="toggle tipinfo open-settings open-siderbar"
+        href="#"
+        data-toggle="tooltip"
+        data-placement="left"
+        data-bs-original-title="Tooltip on left"
+      >
+        <div class="tooltip-five">
+          <i data-feather="settings" class="feather-five"></i>
+          <span class="tooltiptext">Demo Settings</span>
+        </div>
+      </a>
+    </li>
+    <li class="sidebar-icons">
+      <a
+        class="toggle tipinfo"
+        target="_blank"
+        href="https://themeforest.net/item/kanakku-bootstrap-admin-html-template/29436291?s_rank=11"
+        data-toggle="tooltip"
+        data-placement="left"
+        title="Tooltip on left"
+      >
+        <div class="tooltip-five">
+          <i data-feather="shopping-cart" class="feather-five"></i>
+          <span class="tooltiptext">Buy Now</span>
+        </div>
+      </a>
+    </li>
+  </ul>
+</div>
+
+<div class="sidebar-layout">
+  <div class="sidebar-content">
+    <div class="sidebar-top">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-xl-6 col-sm-6 col-12">
+            <div class="sidebar-logo">
+              <a href="index.html" class="logo">
+                <img src="assets/img/logo.png" alt="Logo" class="img-flex" />
+              </a>
+            </div>
+          </div>
+          <div class="col-xl-6 col-sm-6 col-12">
+            <a class="btn-closed" href="#"
+              ><i data-feather="x" class="feather-six"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <h5 class="sidebar-title">Choose layout</h5>
+        <div class="col-xl-6 col-sm-6 col-12">
+          <div class="sidebar-image align-center">
+            <img class="img-fliud" src="assets/img/demo-one.png" alt="demo" />
+          </div>
+          <div class="row">
+            <div class="col-lg-6 layout">
+              <h5 class="layout-title">Demo 1</h5>
+            </div>
+            <div class="col-lg-6 layout">
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  onclick="window.location.href='index.html'"
+                />
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-6 col-sm-6 col-12">
+          <div class="sidebar-image align-center">
+            <img class="img-fliud" src="assets/img/demo-two.png" alt="demo" />
+          </div>
+          <div class="row">
+            <div class="col-lg-6 layout">
+              <h5 class="layout-title">Demo 2</h5>
+            </div>
+            <div class="col-lg-6 layout">
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  onclick="window.location.href='index-two.html'"
+                />
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row align-items-center">
+        <div class="col-xl-6 col-sm-6 col-12">
+          <div class="sidebar-image align-center">
+            <img class="img-fliud" src="assets/img/demo-three.png" alt="demo" />
+          </div>
+          <div class="row">
+            <div class="col-lg-6 layout">
+              <h5 class="layout-title">Demo 3</h5>
+            </div>
+            <div class="col-lg-6 layout">
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  onclick="window.location.href='index-three.html'"
+                />
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-6 col-sm-6 col-12">
+          <div class="sidebar-image align-center">
+            <img class="img-fliud" src="assets/img/demo-four.png" alt="demo" />
+          </div>
+          <div class="row">
+            <div class="col-lg-6 layout">
+              <h5 class="layout-title">Demo 4</h5>
+            </div>
+            <div class="col-lg-6 layout">
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  onclick="window.location.href='index-four.html'"
+                />
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row align-items-center">
+        <div class="col-xl-6 col-sm-6 col-12">
+          <div class="sidebar-image align-center">
+            <img class="img-fliud" src="assets/img/demo-five.png" alt="demo" />
+          </div>
+          <div class="row">
+            <div class="col-lg-6 layout">
+              <h5 class="layout-title">Demo 5</h5>
+            </div>
+            <div class="col-lg-6 layout">
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  onclick="window.location.href='index-five.html'"
+                />
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row align-items-center">
+        <div class="reset-page text-center">
+          <a href="index.html">
+            <button type="button" class="sidebar-but">
+              <i data-feather="refresh-cw"></i>
+              <span>Reset Settings</span>
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sidebar-settings">
+  <div class="sidebar-content sticky-sidebar-one">
+    <div class="sidebar-top">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-xl-6 col-sm-6 col-12">
+            <div class="sidebar-logo">
+              <a href="index.html" class="logo">
+                <img src="assets/img/logo.png" alt="Logo" class="img-flex" />
+              </a>
+            </div>
+          </div>
+          <div class="col-xl-6 col-sm-6 col-12">
+            <a class="btn-closed" href="#"
+              ><i data-feather="x" class="feather-six"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <h5 class="sidebar-title">Preview Setting</h5>
+        <h5 class="sidebar-sub-title">Layout Type</h5>
+        <div class="col-xl-3 col-sm-6">
+          <div class="sidebar-image-one align-center">
+            <img src="assets/img/layout-one.png" alt="layout" />
+          </div>
+          <div class="row">
+            <div class="col-lg-6 setting">
+              <h5 class="setting-title">LTR</h5>
+            </div>
+            <div class="col-lg-6 setting">
+              <label class="switch switch-one">
+                <input
+                  type="checkbox"
+                  onclick="window.location.href='index.html'"
+                />
+                <span class="slider slider-one round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="sidebar-image-one align-center">
+            <img src="assets/img/layout-two.png" alt="layout" />
+          </div>
+          <div class="row">
+            <div class="col-lg-6 setting">
+              <h5 class="setting-title">RTL</h5>
+            </div>
+            <div class="col-lg-6 setting">
+              <label class="switch switch-one">
+                <input
+                  type="checkbox"
+                  onclick="window.location.href='../template-rtl/index.html'"
+                />
+                <span class="slider slider-one round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="sidebar-image-one align-center">
+            <img src="assets/img/layout-three.png" alt="layout" />
+          </div>
+          <div class="row">
+            <div class="col-lg-6 setting">
+              <h5 class="setting-title">BOX</h5>
+            </div>
+            <div class="col-lg-6 setting">
+              <label class="switch switch-one">
+                <input
+                  type="checkbox"
+                  onclick="window.location.href='index-three.html'"
+                />
+                <span class="slider slider-one round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row align-items-center">
+        <h5 class="sidebar-sub-title">Sidebar Type</h5>
+        <div class="col-xl-3 col-sm-6">
+          <div class="sidebar-image-one align-center">
+            <img src="assets/img/layout-four.png" alt="layout" />
+          </div>
+          <div class="row">
+            <div class="col-lg-6 setting">
+              <h5 class="setting-title">Normal</h5>
+            </div>
+            <div class="col-lg-6 setting">
+              <label class="switch switch-one">
+                <input
+                  type="checkbox"
+                  onclick="window.location.href='index-two.html'"
+                />
+                <span class="slider slider-one round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="sidebar-image-one align-center">
+            <img src="assets/img/layout-five.png" alt="layout" />
+          </div>
+          <div class="row">
+            <div class="col-lg-6 setting">
+              <h5 class="setting-title">Compact</h5>
+            </div>
+            <div class="col-lg-6 setting">
+              <label class="switch switch-one">
+                <input
+                  type="checkbox"
+                  onclick="window.location.href='index-five.html'"
+                />
+                <span class="slider slider-one round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row align-items-center">
+        <h5 class="sidebar-sub-title">Header & Sidebar Style</h5>
+        <div class="col-xl-3 col-sm-6">
+          <div class="sidebar-color align-center">
+            <span class="color-one"></span>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 setting">
+              <h5 class="setting-title">White</h5>
+            </div>
+            <div class="col-lg-6 setting">
+              <label class="switch switch-one sidebar-type-two">
+                <input type="checkbox" />
+                <span class="slider slider-one round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="sidebar-color align-center">
+            <span class="color-two"></span>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 setting">
+              <h5 class="setting-title">Lite</h5>
+            </div>
+            <div class="col-lg-6 setting">
+              <label class="switch switch-one sidebar-type-three">
+                <input type="checkbox" />
+                <span class="slider slider-one round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="sidebar-color align-center">
+            <span class="color-three"></span>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 setting">
+              <h5 class="setting-title">Dark</h5>
+            </div>
+            <div class="col-lg-6 setting">
+              <label class="switch switch-one sidebar-type-four">
+                <input type="checkbox" />
+                <span class="slider slider-one round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+          <div class="sidebar-color align-center">
+            <span class="color-eight"></span>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 setting">
+              <h5 class="setting-title">Theme</h5>
+            </div>
+            <div class="col-lg-6 setting">
+              <label class="switch switch-one sidebar-type-five">
+                <input type="checkbox" />
+                <span class="slider slider-one round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row align-items-center">
+        <h5 class="sidebar-sub-title">Primary Skin</h5>
+        <div class="col-xl-6 col-sm-6">
+          <div class="sidebar-color-one align-center">
+            <span class="color-five"></span>
+            <span class="color-four"></span>
+            <span class="color-six"></span>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 setting">
+              <h5 class="setting-title">Theme</h5>
+            </div>
+            <div class="col-lg-6 setting">
+              <label class="switch switch-one primary-skin-one">
+                <input type="checkbox" />
+                <span class="slider slider-one round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-6 col-sm-6">
+          <div class="sidebar-color-one align-center">
+            <span class="color-five"></span>
+            <span class="color-two"></span>
+            <span class="color-six"></span>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 setting">
+              <h5 class="setting-title">Lite</h5>
+            </div>
+            <div class="col-lg-6 setting">
+              <label class="switch switch-one primary-skin-two">
+                <input type="checkbox" />
+                <span class="slider slider-one round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col-xl-6 col-sm-6">
+          <div class="sidebar-color-one align-center">
+            <span class="color-three"></span>
+            <span class="color-four"></span>
+            <span class="color-seven"></span>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 setting">
+              <h5 class="setting-title">Dark</h5>
+            </div>
+            <div class="col-lg-6 setting">
+              <label class="switch switch-one primary-skin-three">
+                <input type="checkbox" />
+                <span class="slider slider-one round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row align-items-center">
+        <div class="col-xl-12 col-sm-12">
+          <div class="reset-page text-center">
+            <a href="index.html">
+              <button type="button" class="sidebar-but">
+                <i data-feather="refresh-cw"></i>
+                <span>Reset Settings</span>
+              </button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

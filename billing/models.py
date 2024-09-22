@@ -31,6 +31,8 @@ class Invoice(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE,null=True)
     date = models.DateField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    paid_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
     created_date = models.DateTimeField(default=timezone.now)  # Use default
     modified_date = models.DateTimeField(auto_now=True)
 
@@ -41,10 +43,13 @@ class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, related_name='items', on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    sgst = models.DecimalField(max_digits=10, decimal_places=2)
-    cgst = models.DecimalField(max_digits=10, decimal_places=2)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2,default=0)
+    amount = models.DecimalField(max_digits=10, decimal_places=2,default=0)
+    sgst = models.DecimalField(max_digits=10, decimal_places=2,default=0)
+    cgst = models.DecimalField(max_digits=10, decimal_places=2,default=0)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2,default=0)
+    total_paid = models.DecimalField(max_digits=10, decimal_places=2,default=0)
+
     created_date = models.DateTimeField(default=timezone.now)  # Use default
     modified_date = models.DateTimeField(auto_now=True)
     def save(self, *args, **kwargs):

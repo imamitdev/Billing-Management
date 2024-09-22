@@ -1,12 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product,Customer,Invoice,InvoiceItem
-from django.forms import formset_factory
+from decimal import Decimal
 
+from django.db.models import Sum, F
 
-from .forms import ProductForm,CustomerForm,InvoiceForm,InvoiceItemForm,InvoiceItemFormset
+from .forms import ProductForm,CustomerForm
 from django.contrib import messages
 from django.http import JsonResponse
-
+import json
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
 def product_list(request):
     products = Product.objects.all()
 
@@ -82,39 +85,102 @@ def update_customer(request,customer_id):
         form = CustomerForm(instance=customer)
     return render(request, 'billing/customer_form.html', {'form': form})
 
+
 def add_invoice(request):
-    InvoiceItemFormSet = formset_factory(InvoiceItemForm, extra=1)
-    
+ 
+
+  
+
+    # Pass customers to the template
+    customers = Customer.objects.all()
+    products = Product.objects.all()
+    return render(request, 'billing/addInvoice.html', {'customers': customers, 'products': products})
+
+@csrf_exempt
+def create_invoice(request):
     if request.method == 'POST':
-        invoice_form = InvoiceForm(request.POST)
-        formset = InvoiceItemFormSet(request.POST)
-        
-        if invoice_form.is_valid() and formset.is_valid():
-            invoice = invoice_form.save(commit=False)
+        try:
+            data = json.loads(request.body)
+            customer_id = data.get('customer')
+            manual_amount = Decimal(data.get('manual_amount', 0))  # Fixed this line
+
+            items = data.get('items', [])
+
+            # Get the customer and create the invoice
+            customer = get_object_or_404(Customer, id=customer_id)
+            invoice = Invoice.objects.create(customer=customer, total_amount=0, paid_amount=manual_amount)
+            total_amount = Decimal('0.00')
+
+            # Create invoice items
+            for item in items:
+                product_id = item.get('product')
+                quantity = Decimal(item.get('quantity', 0))
+                price = Decimal(item.get('price', 0))
+                amount = Decimal(item.get('amount', 0))
+                current_amount = Decimal(item.get('current_amount', 0))
+
+                discount = Decimal(item.get('discount', 0))
+
+                product = get_object_or_404(Product, id=product_id)
+                InvoiceItem.objects.create(
+                    invoice=invoice,
+                    product=product,
+                    quantity=quantity,
+                    amount=current_amount,
+                    price=price,
+                    total_price=amount,
+                    sgst=product.sgst_rate,
+                    cgst=product.cgst_rate
+                )
+                total_amount += amount
+            invoice.total_amount = total_amount
+            invoice.paid_amount = float(manual_amount)
+
             invoice.save()
-            
-            for form in formset:
-                if form.is_valid():
-                    invoice_item = form.save(commit=False)
-                    invoice_item.invoice = invoice
-                    invoice_item.save()
-            
-            return redirect('invoice_list')  # Redirect after saving
-            
-    else:
-        invoice_form = InvoiceForm()
-        formset = InvoiceItemFormSet()
-    
-    return render(request, 'billing/addInvoice.html', {
-        'invoice_form': invoice_form,
-        'item_forms': formset,
-        'products': Product.objects.all()  # Pass your products context
-    })
 
+            return JsonResponse({'status': 'success'}, status=200)
 
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 
 
 def invoice_list(request):
     invoices = Invoice.objects.all()
-    return render(request,'billing/Invoices.html', {'invoices': invoices})
+    total_invoices = invoices.count()  # All invoices
+    total_invoice_amount = invoices.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+
+    paid_invoices = invoices.filter(total_amount=F('paid_amount')).count()  # Fully paid invoices
+    paid_invoice_amount = invoices.filter(total_amount=F('paid_amount')).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+
+    unpaid_invoices = invoices.filter(total_amount__gt=F('paid_amount')).count()  # Unpaid invoices
+    unpaid_invoice_amount = invoices.filter(total_amount__gt=F('paid_amount')).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+
+    # If you have a status field for cancelled invoices
+   
+    for invoice in invoices:
+        invoice.due_amount = invoice.total_amount - invoice.paid_amount
+    
+    context={
+        "invoices":invoices,
+        'total_invoices': total_invoices,
+        'total_invoice_amount': total_invoice_amount,
+        'paid_invoices': paid_invoices,
+        'paid_invoice_amount': paid_invoice_amount,
+        'unpaid_invoices': unpaid_invoices,
+        'unpaid_invoice_amount': unpaid_invoice_amount,
+    
+    }
+    return render(request, 'billing/Invoices.html', context)
+
+def get_invoice(request,id):
+    invoices = get_object_or_404(Invoice, id=id)
+    invoice_items = InvoiceItem.objects.filter(invoice=invoices)
+    
+
+    context={
+        'invoices': invoices,
+        'invoice_item': invoice_items
+
+    }
+    return render(request,'billing/view-invoice.html', context)

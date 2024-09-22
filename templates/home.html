@@ -16,7 +16,7 @@
                             <div class="dash-count">
                                 <div class="dash-title">Amount Due</div>
                                 <div class="dash-counts">
-                                    <p>1,642</p>
+                                    <p>{{unpaid_invoice_amount}}</p>
                                 </div>
                             </div>
                         </div>
@@ -24,8 +24,8 @@
                             <div class="progress-bar bg-5" role="progressbar" style="width: 75%"
                                 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i
-                            class="fas fa-arrow-down me-1"></i>1.15%</span> since last week</p>
+                        {% comment %} <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i
+                            class="fas fa-arrow-down me-1"></i>1.15%</span> since last week</p> {% endcomment %}
                     </div>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                             <div class="dash-count">
                                 <div class="dash-title">Customers</div>
                                 <div class="dash-counts">
-                                    <p>3,642</p>
+                                    <p>{{customers}}</p>
                                 </div>
                             </div>
                         </div>
@@ -47,8 +47,7 @@
                             <div class="progress-bar bg-6" role="progressbar" style="width: 65%"
                                 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        <p class="text-muted mt-3 mb-0"><span class="text-success me-1"><i
-                            class="fas fa-arrow-up me-1"></i>2.37%</span> since last week</p>
+
                     </div>
                 </div>
             </div>
@@ -62,7 +61,7 @@
                             <div class="dash-count">
                                 <div class="dash-title">Invoices</div>
                                 <div class="dash-counts">
-                                    <p>1,041</p>
+                                    <p>{{total_invoices}}</p>
                                 </div>
                             </div>
                         </div>
@@ -70,8 +69,7 @@
                             <div class="progress-bar bg-7" role="progressbar" style="width: 85%"
                                 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        <p class="text-muted mt-3 mb-0"><span class="text-success me-1"><i
-                                    class="fas fa-arrow-up me-1"></i>3.77%</span> since last week</p>
+             
                     </div>
                 </div>
             </div>
@@ -83,9 +81,9 @@
                                 <i class="far fa-file"></i>
                             </span>
                             <div class="dash-count">
-                                <div class="dash-title">Estimates</div>
+                                <div class="dash-title">Due Amount</div>
                                 <div class="dash-counts">
-                                    <p>2,150</p>
+                                    <p>{{unpaid_invoice_amount}}</p>
                                 </div>
                             </div>
                         </div>
@@ -93,8 +91,7 @@
                             <div class="progress-bar bg-8" role="progressbar" style="width: 45%"
                                 aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        <p class="text-muted mt-3 mb-0"><span class="text-danger me-1"><i
-                                    class="fas fa-arrow-down me-1"></i>8.68%</span> since last week</p>
+
                     </div>
                 </div>
             </div>
@@ -109,7 +106,7 @@
                                 <h5 class="card-title">Recent Invoices</h5>
                             </div>
                             <div class="col-auto">
-                                <a href="invoices.html" class="btn-right btn btn-sm btn-outline-primary">
+                                <a href="{% url 'invoice_list' %}" class="btn-right btn btn-sm btn-outline-primary">
                                     View All
                                 </a>
                             </div>
@@ -150,23 +147,24 @@
                                         <th>Amount</th>
                                         <th>Due Date</th>
                                         <th>Status</th>
-                                        <th class="text-right">Action</th>
+                                        {% comment %} <th class="text-right">Action</th> {% endcomment %}
                                     </tr>
                                 </thead>
                                 <tbody>
+
+                                    
+                                    {% for item in invoices %}
+                                       
                                     <tr>
                                         <td>
                                             <h2 class="table-avatar">
-                                                <a href="profile.html"><img
-                                                        class="avatar avatar-sm me-2 avatar-img rounded-circle"
-                                                        src="assets/img/profiles/avatar-04.jpg"
-                                                        alt="User Image">Barbara Moore</a>
+                                                Barbara Moore
                                             </h2>
                                         </td>
                                         <td>$118</td>
                                         <td>23 Nov 2020</td>
                                         <td><span class="badge bg-success-light">Paid</span></td>
-                                        <td class="text-right">
+                                        {% comment %} <td class="text-right">
                                             <div class="dropdown dropdown-action">
                                                 <a href="#" class="action-icon dropdown-toggle"
                                                     data-bs-toggle="dropdown" aria-expanded="false"><i
@@ -187,148 +185,12 @@
                                                             class="far fa-copy me-2"></i>Clone Invoice</a>
                                                 </div>
                                             </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="profile.html"><img
-                                                        class="avatar avatar-sm me-2 avatar-img rounded-circle"
-                                                        src="assets/img/profiles/avatar-06.jpg"
-                                                        alt="User Image">Karlene Chaidez</a>
-                                            </h2>
-                                        </td>
-                                        <td>$222</td>
-                                        <td>18 Nov 2020</td>
-                                        <td><span class="badge bg-info-light">Sent</span></td>
-                                        <td class="text-right">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class="action-icon dropdown-toggle"
-                                                    data-bs-toggle="dropdown" aria-expanded="false"><i
-                                                        class="fas fa-ellipsis-h"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="edit-invoice.html"><i
-                                                            class="far fa-edit me-2"></i>Edit</a>
-                                                    <a class="dropdown-item" href="view-invoice.html"><i
-                                                            class="far fa-eye me-2"></i>View</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-check-circle me-2"></i>Mark as
-                                                        sent</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-paper-plane me-2"></i>Send Invoice</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-copy me-2"></i>Clone Invoice</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="profile.html"><img
-                                                        class="avatar avatar-sm me-2 avatar-img rounded-circle"
-                                                        src="assets/img/profiles/avatar-08.jpg"
-                                                        alt="User Image">Russell Copeland</a>
-                                            </h2>
-                                        </td>
-                                        <td>$347</td>
-                                        <td>10 Nov 2020</td>
-                                        <td><span class="badge bg-warning-light">Partially Paid</span></td>
-                                        <td class="text-right">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class="action-icon dropdown-toggle"
-                                                    data-bs-toggle="dropdown" aria-expanded="false"><i
-                                                        class="fas fa-ellipsis-h"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="edit-invoice.html"><i
-                                                            class="far fa-edit me-2"></i>Edit</a>
-                                                    <a class="dropdown-item" href="view-invoice.html"><i
-                                                            class="far fa-eye me-2"></i>View</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-check-circle me-2"></i>Mark as
-                                                        sent</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-paper-plane me-2"></i>Send Invoice</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-copy me-2"></i>Clone Invoice</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="profile.html"><img
-                                                        class="avatar avatar-sm me-2 avatar-img rounded-circle"
-                                                        src="assets/img/profiles/avatar-10.jpg"
-                                                        alt="User Image">Joseph Collins</a>
-                                            </h2>
-                                        </td>
-                                        <td>$826</td>
-                                        <td>25 Sep 2020</td>
-                                        <td><span class="badge bg-danger-light">Overdue</span></td>
-                                        <td class="text-right">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class="action-icon dropdown-toggle"
-                                                    data-bs-toggle="dropdown" aria-expanded="false"><i
-                                                        class="fas fa-ellipsis-h"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="edit-invoice.html"><i
-                                                            class="far fa-edit me-2"></i>Edit</a>
-                                                    <a class="dropdown-item" href="view-invoice.html"><i
-                                                            class="far fa-eye me-2"></i>View</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-check-circle me-2"></i>Mark as
-                                                        sent</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-paper-plane me-2"></i>Send Invoice</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-copy me-2"></i>Clone Invoice</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="profile.html"><img
-                                                        class="avatar avatar-sm me-2 avatar-img rounded-circle"
-                                                        src="assets/img/profiles/avatar-11.jpg"
-                                                        alt="User Image">Jennifer Floyd</a>
-                                            </h2>
-                                        </td>
-                                        <td>$519</td>
-                                        <td>18 Sep 2020</td>
-                                        <td><span class="badge bg-success-light">Paid</span></td>
-                                        <td class="text-right">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class="action-icon dropdown-toggle"
-                                                    data-bs-toggle="dropdown" aria-expanded="false"><i
-                                                        class="fas fa-ellipsis-h"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <a class="dropdown-item" href="edit-invoice.html"><i
-                                                            class="far fa-edit me-2"></i>Edit</a>
-                                                    <a class="dropdown-item" href="view-invoice.html"><i
-                                                            class="far fa-eye me-2"></i>View</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-check-circle me-2"></i>Mark as
-                                                        sent</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-paper-plane me-2"></i>Send Invoice</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);"><i
-                                                            class="far fa-copy me-2"></i>Clone Invoice</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                        </td> {% endcomment %}
+                                    </tr> 
+                                    {% endfor %}
+                                        
+
+
                                 </tbody>
                             </table>
                         </div>
