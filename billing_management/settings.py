@@ -81,6 +81,7 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+AUTH_USER_MODEL = "accounts.User"
 
 
 # Password validation
