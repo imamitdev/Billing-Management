@@ -17,7 +17,8 @@ urlpatterns = [
 
 
     path('invoices/', views.invoice_list, name='invoice_list'),
-        path('view-invoice/<int:id>/', views.get_invoice, name='get_invoice'),
+    path('view-invoice/<int:id>/', views.get_invoice, name='get_invoice'),
+    path('import_products/', views.import_products, name='import_products'),
 
 
 ]

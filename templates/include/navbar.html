@@ -39,11 +39,11 @@
                 <span>Admin</span>
             </a>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="/"><i data-feather="user" class="me-1"></i>
+                <a class="dropdown-item" href="{% url 'home' %}"><i data-feather="user" class="me-1"></i>
                     Profile</a>
-                <a class="dropdown-item" href="/"><i data-feather="settings" class="me-1"></i>
+                <a class="dropdown-item" href="{% url 'home' %}"><i data-feather="settings" class="me-1"></i>
                     Settings</a>
-                <a class="dropdown-item" href="/"><i data-feather="log-out" class="me-1"></i>
+                <a class="dropdown-item" href="{% url 'logout' %}"><i data-feather="log-out" class="me-1"></i>
                     Logout</a>
             </div>
         </li>

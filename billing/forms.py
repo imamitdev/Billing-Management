@@ -32,3 +32,5 @@ class CustomerForm(forms.ModelForm):
         }
         
         
+class ProductImportForm(forms.Form):
+    file = forms.FileField()

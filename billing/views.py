@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product,Customer,Invoice,InvoiceItem
 from decimal import Decimal
+import csv
 
 from django.db.models import Sum, F
 
-from .forms import ProductForm,CustomerForm
+from .forms import ProductForm,CustomerForm,ProductImportForm
 from django.contrib import messages
 from django.http import JsonResponse
 import json
@@ -187,3 +188,41 @@ def get_invoice(request,id):
 
     }
     return render(request,'billing/view-invoice.html', context)
+
+def import_products(request):
+    if request.method == 'POST':
+        form = ProductImportForm(request.POST, request.FILES)
+        if form.is_valid():
+            file = request.FILES['file']
+
+            # Check if the file is a CSV file
+            if not file.name.endswith('.csv'):
+                messages.error(request, 'This is not a CSV file')
+                return redirect('import_products')
+
+            try:
+                # Decode the file to read the CSV
+                decoded_file = file.read().decode('utf-8').splitlines()
+                reader = csv.DictReader(decoded_file)
+
+                # Iterate through the CSV and create Product objects
+                for row in reader:
+                    Product.objects.create(
+                        name=row['name'],
+                        hsn_no=row.get('hsn_no', ''),
+                        mrp=row['mrp'],
+                        purchase_price=row['purchase_price'],
+                        sgst_rate=row.get('sgst_rate', 0.00),
+                        cgst_rate=row.get('cgst_rate', 0.00),
+                        stock_quantity=row['stock_quantity'],
+                    )
+                messages.success(request, 'Products imported successfully!')
+                return redirect('product_list')
+
+            except Exception as e:
+                messages.error(request, f'Error processing file: {e}')
+                return redirect('import_products')
+    else:
+        form = ProductImportForm()
+
+    return render(request, 'billing/productimport.html', {'form': form})
