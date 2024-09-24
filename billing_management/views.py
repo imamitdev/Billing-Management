@@ -2,8 +2,11 @@
 from django.shortcuts import render
 from billing.models import Product,Customer,Invoice,InvoiceItem
 from decimal import Decimal
+from django.contrib.auth.decorators import login_required
 
 from django.db.models import Sum, F
+
+@login_required(login_url="login")
 def home(request):
     invoices = Invoice.objects.all()
     total_invoices = invoices.count()  # All invoices

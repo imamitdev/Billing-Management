@@ -11,6 +11,11 @@ from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+
+
+
+@login_required(login_url="login")
 def product_list(request):
     products = Product.objects.all()
 
@@ -32,7 +37,7 @@ def product_list(request):
 
     return render(request, 'billing/product_list.html', {'products': products, 'form': form})
 
-
+@login_required(login_url="login")
 def edit_product(request):
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
@@ -50,6 +55,7 @@ def edit_product(request):
         messages.success(request, 'Product updated successfully!')
         return redirect('product_list')
 
+@login_required(login_url="login")
 def delete_product(request):
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
@@ -62,6 +68,7 @@ def delete_product(request):
     return redirect('product_list')
 
 
+@login_required(login_url="login")
 def customer_create(request):
     if request.method == 'POST':
         form = CustomerForm(request.POST)
@@ -72,9 +79,11 @@ def customer_create(request):
         form = CustomerForm()
     return render(request, 'billing/customer_form.html', {'form': form})
 
+@login_required(login_url="login")
 def customer_list(request):
     customers = Customer.objects.all()
     return render(request, 'billing/customer_list.html', {'customers': customers})
+@login_required(login_url="login")
 def update_customer(request,customer_id):
     customer=get_object_or_404(Customer,id=customer_id)
     if request.method == 'POST':
@@ -87,6 +96,7 @@ def update_customer(request,customer_id):
     return render(request, 'billing/customer_form.html', {'form': form})
 
 
+@login_required(login_url="login")
 def add_invoice(request):
  
 
@@ -97,6 +107,7 @@ def add_invoice(request):
     products = Product.objects.all()
     return render(request, 'billing/addInvoice.html', {'customers': customers, 'products': products})
 
+@login_required(login_url="login")
 @csrf_exempt
 def create_invoice(request):
     if request.method == 'POST':
@@ -147,6 +158,7 @@ def create_invoice(request):
 
 
 
+@login_required(login_url="login")
 def invoice_list(request):
     invoices = Invoice.objects.all()
     total_invoices = invoices.count()  # All invoices
@@ -176,6 +188,7 @@ def invoice_list(request):
     }
     return render(request, 'billing/Invoices.html', context)
 
+@login_required(login_url="login")
 def get_invoice(request,id):
     invoices = get_object_or_404(Invoice, id=id)
     invoice_items = InvoiceItem.objects.filter(invoice=invoices)
@@ -189,6 +202,7 @@ def get_invoice(request,id):
     }
     return render(request,'billing/view-invoice.html', context)
 
+@login_required(login_url="login")
 def import_products(request):
     if request.method == 'POST':
         form = ProductImportForm(request.POST, request.FILES)
