@@ -1,4 +1,7 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} 
+{% load static %}
+
+{% block content %}
 
 <div class="page-wrapper">
   <div class="content container-fluid">
@@ -7,7 +10,7 @@
         <div class="col">
           <h3 class="page-title">Invoices</h3>
           <ul class="breadcrumb">
-            <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Dashboard</a></li>
             <li class="breadcrumb-item active">Invoices</li>
           </ul>
         </div>
@@ -30,7 +33,7 @@
           <div class="card-body">
             <div class="inovices-widget-header">
               <span class="inovices-widget-icon">
-                <img src="assets/img/icons/invoices-icon1.svg" alt="" />
+                <img src="{% static 'assets/img/icons/invoices-icon1.svg' %}" alt="" />
               </span>
               <div class="inovices-dash-count">
                 <div class="inovices-amount">{{total_invoice_amount}}</div>

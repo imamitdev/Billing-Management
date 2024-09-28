@@ -189,18 +189,29 @@ def invoice_list(request):
     return render(request, 'billing/Invoices.html', context)
 
 @login_required(login_url="login")
-def get_invoice(request,id):
+def get_invoice(request, id):
     invoices = get_object_or_404(Invoice, id=id)
     invoice_items = InvoiceItem.objects.filter(invoice=invoices)
     
-    
+    # Calculate totals
+    taxable_amount = sum(item.total_amount for item in invoice_items)
+    cgst_total = sum(item.cgst for item in invoice_items)
+    sgst_total = sum(item.sgst for item in invoice_items)
+    total_price = sum(item.total_price for item in invoice_items)
+    due_amount = invoices.total_amount - invoices.paid_amount
 
-    context={
+    context = {
         'invoices': invoices,
-        'invoice_item': invoice_items
-
+        'invoice_item': invoice_items,
+        'taxable_amount': taxable_amount,
+        'cgst_total': cgst_total,
+        'sgst_total': sgst_total,
+        'total_price': total_price,
+        "due_amount":due_amount,
     }
-    return render(request,'billing/view-invoice.html', context)
+    
+    return render(request, 'billing/view-invoice.html', context)
+
 
 @login_required(login_url="login")
 def import_products(request):

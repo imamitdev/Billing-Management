@@ -13,15 +13,18 @@
     <link rel="stylesheet" href="{% static 'assets/plugins/select2/css/select2.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/plugins/datatables/datatables.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/bootstrap-datetimepicker.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/plugins/toastr/toatr.css' %}" />
 
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
 </head>
 
 <body class="nk-body bg-lighter npc-default has-sidebar no-touch nk-nio-theme">
     <div class="main-wrapper">
+
         {% include 'include/navbar.html' %}
         {% include 'include/sidebar.html' %}
 
+        
     {% block content %}
 
 
@@ -45,7 +48,8 @@
 
 <script src="{% static 'assets/plugins/moment/moment.min.js' %}"></script>
 <script src="{% static 'assets/js/bootstrap-datetimepicker.min.js' %}"></script>
-
+<script src="{% static 'assets/plugins/toastr/toastr.min.js' %}"></script>
+<script src="{% static 'assets/plugins/toastr/toastr.js' %}"></script>
 <script src="{% static 'assets/js/script.js' %}"></script>
 
 

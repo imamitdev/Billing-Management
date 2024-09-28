@@ -4,8 +4,12 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages, auth
 from .models import User, UserProfile
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 
 def user_login(request):
+    if request.user.is_authenticated:
+        return redirect(reverse('home'))
+    
     if request.method == "POST":
         email = request.POST["email"]
         password = request.POST["password"]
@@ -17,7 +21,7 @@ def user_login(request):
             messages.success(request, "You are now logged in.")
             return redirect("home")
         else:
-            messages.error(request, "Invalid Login credentials")
+            messages.error(request, "Invalid login credentials")
             return redirect("login")
     return render(request, "account/login.html")
 
@@ -39,7 +43,11 @@ def user_register(request):
             )
             user.save()
             login(request, user)
+            messages.success(request, "Registration successful. You are now logged in.")
             return redirect("home")
+        else:
+            messages.error(request, "Registration failed. Please check the form.")
+
     else:
         form = RegistrationForm()  # Fixed typo
 
@@ -47,7 +55,7 @@ def user_register(request):
 @login_required(login_url="login")
 def logout(request):
     auth.logout(request)
-    messages.success(request, "You are logged out")
+    messages.success(request, "You have been logged out successfully.")
     return redirect("login")
 
 def forgetpassword(request):

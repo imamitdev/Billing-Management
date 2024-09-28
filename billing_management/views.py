@@ -3,34 +3,37 @@ from django.shortcuts import render
 from billing.models import Product,Customer,Invoice,InvoiceItem
 from decimal import Decimal
 from django.contrib.auth.decorators import login_required
-
+from django.utils import timezone
 from django.db.models import Sum, F
 
 @login_required(login_url="login")
 def home(request):
-    invoices = Invoice.objects.all()
-    total_invoices = invoices.count()  # All invoices
-    total_invoice_amount = invoices.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
-
-    paid_invoices = invoices.filter(total_amount=F('paid_amount')).count()  # Fully paid invoices
-    paid_invoice_amount = invoices.filter(total_amount=F('paid_amount')).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
-
-    unpaid_invoices = invoices.filter(total_amount__gt=F('paid_amount')).count()  # Unpaid invoices
-    unpaid_invoice_amount = invoices.filter(total_amount__gt=F('paid_amount')).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    current_date = timezone.now()
+    first_day_current_month = current_date.replace(day=1)
     customers = Customer.objects.all().count()
+    total_invoices = Invoice.objects.count()
+    total_paid_amount = Invoice.objects.aggregate(Sum('paid_amount'))['paid_amount__sum'] or 0
+    total_amount = Invoice.objects.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    total_due_amount = total_amount - total_paid_amount
+    # Amounts for current month
+    current_month_amount = Invoice.objects.filter(date__gte=first_day_current_month).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    
+    # Amount for previous month
+    first_day_previous_month = first_day_current_month - timezone.timedelta(days=1)
+    first_day_previous_month = first_day_previous_month.replace(day=1)
+    last_day_previous_month = first_day_current_month - timezone.timedelta(days=1)
 
-    
-    
-    context={
-        "invoices":invoices,
+    previous_month_amount = Invoice.objects.filter(date__gte=first_day_previous_month, date__lte=last_day_previous_month).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+
+    context = {
+        "customers":customers,
+
         'total_invoices': total_invoices,
-        
-        'total_invoice_amount': total_invoice_amount,
-        'paid_invoices': paid_invoices,
-        'paid_invoice_amount': paid_invoice_amount,
-        'unpaid_invoices': unpaid_invoices,
-        'unpaid_invoice_amount': unpaid_invoice_amount,
-        "customers":customers
-    
+        'total_paid_amount': total_paid_amount,
+        'total_amount': total_amount,
+        'total_due_amount': total_due_amount,
+        'current_month_amount': current_month_amount,
+        'previous_month_amount': previous_month_amount,
     }
+    
     return render(request, "home.html",context)

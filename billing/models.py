@@ -34,7 +34,6 @@ class Invoice(models.Model):
     total_sgst=models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_cgst=models.DecimalField(max_digits=10, decimal_places=2, default=0)
     paid_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-
     created_date = models.DateTimeField(default=timezone.now)  # Use default
     modified_date = models.DateTimeField(auto_now=True)
 
@@ -49,6 +48,8 @@ class InvoiceItem(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2,default=0)
     sgst = models.DecimalField(max_digits=10, decimal_places=2,default=0)
     cgst = models.DecimalField(max_digits=10, decimal_places=2,default=0)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2,default=0)
+
     total_price = models.DecimalField(max_digits=10, decimal_places=2,default=0)
     total_paid = models.DecimalField(max_digits=10, decimal_places=2,default=0)
 
@@ -56,8 +57,8 @@ class InvoiceItem(models.Model):
     modified_date = models.DateTimeField(auto_now=True)
     def save(self, *args, **kwargs):
         # Calculate SGST and CGST
-        self.price = self.product.purchase_price * self.quantity
-        self.sgst = (self.product.sgst_rate / 100) * self.price
-        self.cgst = (self.product.cgst_rate / 100) * self.price
-        self.total_price = self.price + self.sgst + self.cgst
+        self.total_amount = self.amount * self.quantity
+        self.sgst = (self.product.sgst_rate / 100) * self.total_amount
+        self.cgst = (self.product.cgst_rate / 100) * self.total_amount
+        self.total_price = self.total_amount + self.sgst + self.cgst
         super().save(*args, **kwargs)
