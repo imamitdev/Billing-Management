@@ -1,17 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product,Customer,Invoice,InvoiceItem
+from .models import Product,Customer,Invoice,InvoiceItem,Payment
 from decimal import Decimal
 import csv
 
 from django.db.models import Sum, F
 
-from .forms import ProductForm,CustomerForm,ProductImportForm
+from .forms import ProductForm,CustomerForm,ProductImportForm,PaymentForm
 from django.contrib import messages
 from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from datetime import datetime
 
 
 
@@ -197,7 +199,7 @@ def get_invoice(request, id):
     taxable_amount = sum(item.total_amount for item in invoice_items)
     cgst_total = sum(item.cgst for item in invoice_items)
     sgst_total = sum(item.sgst for item in invoice_items)
-    total_price = sum(item.total_price for item in invoice_items)
+    total_price =  sum(item.total_price for item in invoice_items)
     due_amount = invoices.total_amount - invoices.paid_amount
 
     context = {
@@ -211,6 +213,8 @@ def get_invoice(request, id):
     }
     
     return render(request, 'billing/view-invoice.html', context)
+
+
 
 
 @login_required(login_url="login")
@@ -251,3 +255,63 @@ def import_products(request):
         form = ProductImportForm()
 
     return render(request, 'billing/productimport.html', {'form': form})
+
+@login_required(login_url="login")
+def add_payment(request, invoice_id):
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+
+    if request.method == 'POST':
+        # Collecting data from the form
+        payment_date = request.POST.get('payment_date')
+        amount = request.POST.get('amount')
+        payment_method = request.POST.get('payment_method')
+        note = request.POST.get('note')
+        print(payment_date)
+        print( timezone.datetime.strptime(payment_date, '%d-%m-%Y')
+)
+        # Validate the date format if needed
+        try:
+            payment_date = timezone.datetime.strptime(payment_date, '%d-%m-%Y')
+        except ValueError:
+            messages.error(request, 'Invalid date format. Please use YYYY-MM-DD.')
+            return redirect('add_payment', invoice_id=invoice.id)
+        amount = Decimal(amount)
+
+        # Create a new payment instance
+        payment = Payment(
+            invoice=invoice,
+            payment_date=payment_date,
+            amount=amount,
+            payment_method=payment_method,
+            note=note
+        )
+        payment.save()
+
+        # Update the invoice's paid amount after payment is made
+        invoice.paid_amount += payment.amount
+        invoice.save()
+
+        messages.success(request, 'Payment added successfully!')
+        return redirect('payment_report')
+
+    return render(request, 'invoices/add-payment.html', {'invoice': invoice})
+
+
+def payment_report(request):
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    payments = Payment.objects.all()
+
+    if start_date and end_date:
+        try:
+            # Parse the date strings into datetime objects
+            start_date = datetime.strptime(start_date, '%Y-%m-%d')
+            end_date = datetime.strptime(end_date, '%Y-%m-%d') + timezone.timedelta(days=1)  # Include end date
+            payments = payments.filter(payment_date__range=(start_date, end_date))
+        except ValueError:
+            payments = []
+
+    return render(request, 'reports/payments.html', {
+        'payments': payments
+    })

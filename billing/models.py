@@ -62,3 +62,31 @@ class InvoiceItem(models.Model):
         self.cgst = (self.product.cgst_rate / 100) * self.total_amount
         self.total_price = self.total_amount + self.sgst + self.cgst
         super().save(*args, **kwargs)
+        
+class Payment(models.Model):
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='payments')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_date = models.DateTimeField()
+    payment_method = models.CharField(max_length=50, choices=[('Cash', 'Cash'), ('Credit Card', 'Credit Card'), ('Bank Transfer', 'Bank Transfer')])
+    note = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Payment of {self.amount} for Invoice {self.invoice.id}"
+
+class Expense(models.Model):
+    EXPENSE_TYPE_CHOICES = [
+        ('purchase', 'Purchase'),
+        ('operational', 'Operational'),
+        ('other', 'Other'),
+    ]
+    
+    expense_type = models.CharField(max_length=50, choices=EXPENSE_TYPE_CHOICES)
+    description = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateField(default=timezone.now)
+    
+    created_date = models.DateTimeField(default=timezone.now)
+    modified_date = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.description} - ₹{self.amount}"

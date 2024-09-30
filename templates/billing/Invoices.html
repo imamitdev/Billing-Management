@@ -1,8 +1,4 @@
-{% extends 'base.html' %} 
-{% load static %}
-
-{% block content %}
-
+{% extends 'base.html' %} {% load static %} {% block content %}
 <div class="page-wrapper">
   <div class="content container-fluid">
     <div class="page-header">
@@ -15,145 +11,69 @@
           </ul>
         </div>
         <div class="col-auto">
-          <a href="invoices.html" class="invoices-links active">
-            <i data-feather="list"></i>
+          <a href="{% url 'add_invoice' %}" class="btn btn-primary me-1">
+            <i class="fas fa-plus"></i>
           </a>
-          <a href="invoice-grid.html" class="invoices-links">
-            <i data-feather="grid"></i>
-          </a>
+   
         </div>
       </div>
     </div>
 
- 
 
-    <div class="row">
-      <div class="col-xl-3 col-sm-6 col-12">
-        <div class="card inovices-card">
-          <div class="card-body">
-            <div class="inovices-widget-header">
-              <span class="inovices-widget-icon">
-                <img src="{% static 'assets/img/icons/invoices-icon1.svg' %}" alt="" />
-              </span>
-              <div class="inovices-dash-count">
-                <div class="inovices-amount">{{total_invoice_amount}}</div>
-              </div>
-            </div>
-            <p class="inovices-all">All Invoices <span>{{total_invoices}}</span></p>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-3 col-sm-6 col-12">
-        <div class="card inovices-card">
-          <div class="card-body">
-            <div class="inovices-widget-header">
-              <span class="inovices-widget-icon">
-                <img src="assets/img/icons/invoices-icon2.svg" alt="" />
-              </span>
-              <div class="inovices-dash-count">
-                <div class="inovices-amount">{{paid_invoice_amount}}</div>
-              </div>
-            </div>
-            <p class="inovices-all">Paid Invoices <span>{{paid_invoices}}</span></p>
-          </div>
-        </div>
-      </div>
-      <div class="col-xl-3 col-sm-6 col-12">
-        <div class="card inovices-card">
-          <div class="card-body">
-            <div class="inovices-widget-header">
-              <span class="inovices-widget-icon">
-                <img src="assets/img/icons/invoices-icon3.svg" alt="" />
-              </span>
-              <div class="inovices-dash-count">
-                <div class="inovices-amount">{{unpaid_invoice_amount}}</div>
-              </div>
-            </div>
-            <p class="inovices-all">Unpaid Invoices <span>{{unpaid_invoices}}</span></p>
-          </div>
-        </div>
-      </div>
-
-    </div>
     <div class="row">
       <div class="col-sm-12">
         <div class="card card-table">
           <div class="card-body">
             <div class="table-responsive">
-              <table class="table table-stripped table-hover datatable">
+              <table class="table table-center table-hover datatable">
                 <thead class="thead-light">
                   <tr>
                     <th>Invoice ID</th>
-                    <th>Created on</th>
-                    <th>Invoice to</th>
-                    <th>Amount</th>
-                    <th>Received Amount</th>
+                    <th>Customer</th>
+                    <th>Total Amount</th>
+                    <th>Paid Amount</th>
                     <th>Due Amount</th>
 
-                    {% comment %} <th>Status</th> {% endcomment %}
+                    <th>Date</th>
                     <th class="text-end">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  
                   {% for  bills in  invoices %}
+
                   <tr>
-                    <td>
-                    
-                      <a href="{% url 'get_invoice' bills.id %}" class="invoice-link"
-                        >{{bills.id}}</a
-                      >
-                    </td>
-                    <td>{{bills.created_date}}</td>
+                    <td><a href="{% url 'get_invoice' bills.id %}">#{{bills.id}}</a></td>
                     <td>
                       <h2 class="table-avatar">
-                   
-                        {{bills.customer.customer_name}}
+                        <a href="{% url 'get_invoice' bills.id %}"
+                          >
+                          {{bills.customer.customer_name}}
+                          </a
+                        >
                       </h2>
-
                     </td>
-                    <td class="text-primary">{{bills.total_amount}}</td>
-                    <td class="text-primary">{{bills.paid_amount}}</td>
-                    <td class="text-primary">{{ bills.due_amount }}</td>
-
-                    {% comment %} <td><span class="badge bg-success-light">Paid</span></td> {% endcomment %}
+                    <td>$                         {{bills.total_amount}}
+                    </td>
+                    <td>$                         {{bills.paid_amount}}
+                    </td>
+                    <td>$                         {{bills.due_amount}}
+                    </td>
+                    <td>{{bills.created_date}}</td>
                     <td class="text-end">
-                      <div class="dropdown dropdown-action">
-                        <a
-                          href="#"
-                          class="action-icon dropdown-toggle"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                          ><i class="fas fa-ellipsis-v"></i
-                        ></a>
-                        <div class="dropdown-menu dropdown-menu-end">
-                          <a class="dropdown-item" href="edit-invoice.html"
-                            ><i class="far fa-edit me-2"></i>Edit</a
-                          >
-                          <a class="dropdown-item" href="{% url 'get_invoice' bills.id %}"
-                            ><i class="far fa-eye me-2"></i>View</a
-                          >
-                          <a class="dropdown-item" href="javascript:void(0);"
-                            ><i class="far fa-trash-alt me-2"></i>Delete</a
-                          >
-                          <a class="dropdown-item" href="javascript:void(0);"
-                            ><i class="far fa-check-circle me-2"></i>Mark as
-                            sent</a
-                          >
-                          <a class="dropdown-item" href="javascript:void(0);"
-                            ><i class="far fa-paper-plane me-2"></i>Send
-                            Invoice</a
-                          >
-                          <a class="dropdown-item" href="javascript:void(0);"
-                            ><i class="far fa-copy me-2"></i>Clone Invoice</a
-                          >
-                        </div>
-                      </div>
+                      <a
+                        class="btn btn-sm btn-white me-2"
+                        href="{% url 'add_payment' bills.id %}"
+                      >
+                        <i class="fas si-download me-1"></i> PDF
+                      </a>
+                      <a class="btn btn-sm btn-white" href="{% url 'get_invoice' bills.id %}">
+                        <i class="far fa-eye me-1"></i> View
+                      </a>
                     </td>
                   </tr>
+     
+           
                   {% endfor %}
-                    
-              
 
                 </tbody>
               </table>

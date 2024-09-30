@@ -2,13 +2,13 @@
 
 <div class="header header-one">
     <div class="header-left header-left-one">
-        <a href="index.html" class="logo">
+        <a href="{% url 'home' %}" class="logo">
             <img src="{% static 'assets/img/logo.png' %}" alt="Logo">
         </a>
-        <a href="index.html" class="white-logo">
+        <a href="{% url 'home' %}" class="white-logo">
             <img src="{% static 'assets/img/logo-white.png' %}" alt="Logo">
         </a>
-        <a href="index.html" class="logo logo-small">
+        <a href="{% url 'home' %}" class="logo logo-small">
             <img src="{% static 'assets/img/logo-small.png' %}" alt="Logo" width="30" height="30">
         </a>
     </div>
@@ -25,12 +25,7 @@
         <i class="fas fa-bars"></i>
     </a>
     <ul class="nav nav-tabs user-menu">
-    
-
-    
-
-
-        <li class="nav-item dropdown has-arrow main-drop">
+            <li class="nav-item dropdown has-arrow main-drop">
             <a href="#" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
                 <span class="user-img">
                     <img src="{% static 'assets/img/profiles/avatar-01.jpg' %}" alt="">

@@ -13,12 +13,14 @@ urlpatterns = [
     path('customers/edit/<int:customer_id>/', views.update_customer, name='update_customer'),
 
     path('addInovice/', views.add_invoice ,name='add_invoice'),
-        path('create_invoice/', views.create_invoice ,name='create_invoice'),
+    path('create_invoice/', views.create_invoice ,name='create_invoice'),
 
 
     path('invoices/', views.invoice_list, name='invoice_list'),
     path('view-invoice/<int:id>/', views.get_invoice, name='get_invoice'),
     path('import_products/', views.import_products, name='import_products'),
+    path('payments/add/<int:invoice_id>/', views.add_payment, name='add_payment'),
+    path('report/payments/', views.payment_report, name='payment_report'),
 
 
 ]
