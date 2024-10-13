@@ -159,6 +159,48 @@ def create_invoice(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 
+@login_required(login_url="login")
+def invoice_special(request):
+ 
+
+  
+
+    # Pass customers to the template
+    customers = Customer.objects.all()
+    products = Product.objects.all()
+    return render(request, 'billing/specialbilling.html', {'customers': customers, 'products': products})
+
+@csrf_exempt
+def addInvoice_special(request):
+    if request.method == 'POST':
+        try:
+            # Parse the form data from JSON
+            data = json.loads(request.body)
+            
+            # Log the received data for debugging
+            print("Received data:", data)
+
+            # Get the customer
+            customer_id = data.get('customer')
+            customer = get_object_or_404(Customer, id=customer_id)
+
+            # Create a new Invoice
+            invoice = Invoice.objects.create(
+                customer=customer,
+                total_amount=data.get('taxable_amount',0),
+                paid_amount=data.get('manual_amount', 0),
+                # Add other fields if necessary
+            )
+
+            # Return a success response
+            return JsonResponse({"message": "Invoice saved successfully!"}, status=200)
+
+        except Exception as e:
+            # Log the exception for easier debugging
+            print("Error occurred:", str(e))
+            return JsonResponse({"error": str(e)}, status=400)
+    
+    return JsonResponse({"error": "Invalid request method."}, status=400)
 
 @login_required(login_url="login")
 def invoice_list(request):
@@ -255,6 +297,9 @@ def import_products(request):
         form = ProductImportForm()
 
     return render(request, 'billing/productimport.html', {'form': form})
+
+
+
 
 @login_required(login_url="login")
 def add_payment(request, invoice_id):
