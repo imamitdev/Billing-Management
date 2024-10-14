@@ -201,36 +201,24 @@ def addInvoice_special(request):
             return JsonResponse({"error": str(e)}, status=400)
     
     return JsonResponse({"error": "Invalid request method."}, status=400)
-
 @login_required(login_url="login")
 def invoice_list(request):
-    invoices = Invoice.objects.all()
-    total_invoices = invoices.count()  # All invoices
-    total_invoice_amount = invoices.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    invoices = Invoice.objects.annotate(
+        due_amount=F('total_amount') - F('paid_amount')  # Calculate due amount dynamically
+    )
 
-    paid_invoices = invoices.filter(total_amount=F('paid_amount')).count()  # Fully paid invoices
-    paid_invoice_amount = invoices.aggregate(Sum('paid_amount'))['paid_amount__sum'] or 0
+    # Filter invoices where the due amount is greater than 0
+    invoices_with_due = invoices.filter(due_amount__gt=0)
 
-
-    unpaid_invoices = invoices.filter(total_amount__gt=F('paid_amount')).count()  # Unpaid invoices
-    unpaid_invoice_amount = invoices.filter(total_amount__gt=F('paid_amount')).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
-
-    # If you have a status field for cancelled invoices
-   
-    for invoice in invoices:
-        invoice.due_amount = invoice.total_amount - invoice.paid_amount
     
-    context={
-        "invoices":invoices,
-        'total_invoices': total_invoices,
-        'total_invoice_amount': total_invoice_amount,
-        'paid_invoices': paid_invoices,
-        'paid_invoice_amount': paid_invoice_amount,
-        'unpaid_invoices': unpaid_invoices,
-        'unpaid_invoice_amount': unpaid_invoice_amount,
+
+    context = {
+        "invoices": invoices_with_due,  # Pass only invoices with a due amount > 0
     
     }
+
     return render(request, 'billing/Invoices.html', context)
+
 
 @login_required(login_url="login")
 def get_invoice(request, id):
