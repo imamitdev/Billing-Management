@@ -21,10 +21,12 @@ class ProductForm(forms.ModelForm):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ['customer_name', 'mobile_number','address']
+        fields = ['customer_name', 'mobile_number','gst_no','address']
         widgets = {
             "customer_name": forms.TextInput(attrs={"class": "form-control", "required": True}),
             "mobile_number": forms.TextInput(attrs={"class": "form-control"}),
+            "gst_no": forms.TextInput(attrs={"class": "form-control"}),
+
             "address": forms.Textarea(attrs={"class": "form-control"}),
        
 

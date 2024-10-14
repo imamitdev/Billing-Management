@@ -20,6 +20,7 @@ class Product(models.Model):
 class Customer(models.Model):
     customer_name=models.CharField(max_length=255)
     mobile_number=models.CharField(max_length=50)
+    gst_no = models.CharField(max_length=250, blank=True)
     address = models.CharField(max_length=250, blank=True)
     created_date = models.DateTimeField(default=timezone.now)  # Use default
     modified_date = models.DateTimeField(auto_now=True)
