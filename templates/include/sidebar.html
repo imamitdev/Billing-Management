@@ -35,12 +35,14 @@
                       <span class="menu-arrow"></span
                     ></a>
                     <ul>
-                      <li><a href="sales-report.html">Sales Report</a></li>
+                      <li><a href="{% url "sales_report" %}">Sales Report</a></li>
+                      <li><a href="{% url "product_sale_report" %}">Product Sales Report</a></li>
+
                       <li><a href="expenses-report.html">Expenses Report</a></li>
                       <li>
-                        <a href="profit-loss-report.html">Profit & Loss Report</a>
+                        <a href="{% url "profit_loss_report" %}">Profit & Loss Report</a>
                       </li>
-                      <li><a href="taxs-report.html">Taxs Report</a></li>
+                      <li><a href="{% url "tax_report" %}">Taxs Report</a></li>
                     </ul>
                   </li>
    

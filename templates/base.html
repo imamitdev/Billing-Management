@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="{% static 'assets/plugins/toastr/toatr.css' %}" />
 
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 </head>
 
 <body class="nk-body bg-lighter npc-default has-sidebar no-touch nk-nio-theme">
@@ -32,6 +34,23 @@
 
 </div>
 
+  <script type="text/javascript">
+    document.getElementById('filter_search').addEventListener('click', function() {
+        var filterPanel = document.getElementById('filter_inputs');
+        if (filterPanel.style.display === "none") {
+            filterPanel.style.display = "block";
+        } else {
+            filterPanel.style.display = "none";
+        }
+    });
+
+    $(document).ready(function() {
+        $('.datatable').DataTable(); // Initialize DataTable
+    });
+    
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
 <script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
 

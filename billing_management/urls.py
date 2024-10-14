@@ -22,6 +22,7 @@ urlpatterns = [
     path("billing/", include("billing.urls")),
     path('home/', views.home ,name='home'),
     path('', include("accounts.urls")),
+    path('reports/', include("reports.urls")),
 
 
 ]

@@ -1,0 +1,65 @@
+<!-- profit_loss_report.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profit & Loss Report</title>
+</head>
+<body>
+    <h1>Profit & Loss Report</h1>
+    <form method="get">
+        {{ form.as_p }}
+        <button type="submit">Generate Report</button>
+    </form>
+
+    {% if total_revenue or total_expenses %}
+        <h2>Report from {{ form.cleaned_data.start_date }} to {{ form.cleaned_data.end_date }}</h2>
+
+        <h3>Revenue:</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Invoice ID</th>
+                    <th>Customer</th>
+                    <th>Total Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invoice in invoices %}
+                    <tr>
+                        <td>{{ invoice.id }}</td>
+                        <td>{{ invoice.customer.customer_name }}</td>
+                        <td>₹{{ invoice.total_amount }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p><strong>Total Revenue: ₹{{ total_revenue }}</strong></p>
+
+        <h3>Expenses:</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Expense Description</th>
+                    <th>Expense Type</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                    <tr>
+                        <td>{{ expense.description }}</td>
+                        <td>{{ expense.get_expense_type_display }}</td>
+                        <td>₹{{ expense.amount }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p><strong>Total Expenses: ₹{{ total_expenses }}</strong></p>
+
+        <h3>Profit or Loss:</h3>
+        <p><strong>Profit/Loss: ₹{{ profit_or_loss }}</strong></p>
+    {% endif %}
+</body>
+</html>
