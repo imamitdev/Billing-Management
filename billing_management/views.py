@@ -28,7 +28,9 @@ def home(request):
 
     recent_invoices = Invoice.objects.filter(created_date__date=today)[:10]
     today_payments = Payment.objects.filter(payment_date__date=today)[:10]
-    total_payment = today_payments.aggregate(total=Sum('amount'))['total'] or 0
+    payments_total = Payment.objects.filter(payment_date__date=today)
+
+    total_payment = payments_total.aggregate(total=Sum('amount'))['total'] or 0
 
 
     context = {
