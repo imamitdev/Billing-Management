@@ -289,25 +289,26 @@
               <table class="table table-stripped table-hover">
                 <thead class="thead-light">
                   <tr>
+                    <th>Invoice</th>
+
                     <th>Customer</th>
                     <th>Amount</th>
-                    <th>Due Date</th>
-                    <th>Status</th>
+                    <th>Paid Amount</th>
                     {% comment %}
                     <th class="text-right">Action</th>
                     {% endcomment %}
                   </tr>
                 </thead>
                 <tbody>
-                  {% for item in invoices %}
+                  {% for item in recent_invoices %}
 
                   <tr>
+                    <td>{{item.id}}</td>
                     <td>
-                      <h2 class="table-avatar">Barbara Moore</h2>
+                      <h2 class="table-avatar">{{item.customer.customer_name}}</h2>
                     </td>
-                    <td>$118</td>
-                    <td>23 Nov 2020</td>
-                    <td><span class="badge bg-success-light">Paid</span></td>
+                    <td>{{item.total_amount}}</td>
+                    <td>{{item.paid_amount}}</td>
        
                   </tr>
                   {% endfor %}
@@ -375,6 +376,8 @@
               <table class="table table-hover">
                 <thead class="thead-light">
                   <tr>
+                    <th>Invoice</th>
+
                     <th>Customer</th>
                     <th> Date</th>
                     <th>Amount</th>
@@ -384,13 +387,15 @@
                   {% for today in today_payments %}
                   
                   <tr>
+                    <td>{{today.invoice.id}}</td>
+
                     <td>
                       <h2 class="table-avatar">
                       
 {{today.invoice.customer.customer_name}}                      </h2>
                     </td>
-                    <td>5 Nov 2020</td>
-                    <td>$175</td>
+                    <td>{{today.payment_date}}</td>
+                    <td>{{today.amount}}</td>
                 
                   </tr>
   
