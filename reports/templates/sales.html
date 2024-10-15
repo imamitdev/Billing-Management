@@ -63,6 +63,8 @@
                                     <thead>
                                         <tr>
                                             <th>Invoice Number</th>
+                                            <th>Customer </th>
+
                                             <th>Date</th>
                                             <th>Total Amount</th>
                                             <th>Paid Amount</th>
@@ -75,6 +77,8 @@
                                         {% for invoice in invoices %}
                                         <tr>
                                             <td>#{{ invoice.id }}</td>
+                                            <td>{{ invoice.customer.customer_name }}</td>
+
                                             <td>{{ invoice.date }}</td>
                                             <td>{{ invoice.total_amount }}</td>
                                             <td>{{ invoice.paid_amount }}</td>

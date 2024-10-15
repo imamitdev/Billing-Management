@@ -24,8 +24,9 @@ def home(request):
     last_day_previous_month = first_day_current_month - timezone.timedelta(days=1)
 
     previous_month_amount = Invoice.objects.filter(date__gte=first_day_previous_month, date__lte=last_day_previous_month).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
-    recent_invoices = Invoice.objects.order_by('-date')[:10]
     today = timezone.now().date()
+
+    recent_invoices = Invoice.objects.filter(created_date=today)[:10]
     today_payments = Payment.objects.filter(payment_date__date=today)[:10]
     total_payment = today_payments.aggregate(total=Sum('amount'))['total'] or 0
 
