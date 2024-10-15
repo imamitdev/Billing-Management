@@ -1,6 +1,6 @@
 
 from django.shortcuts import render
-from billing.models import Product,Customer,Invoice,InvoiceItem
+from billing.models import Product,Customer,Invoice,InvoiceItem,Payment
 from decimal import Decimal
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
@@ -24,10 +24,17 @@ def home(request):
     last_day_previous_month = first_day_current_month - timezone.timedelta(days=1)
 
     previous_month_amount = Invoice.objects.filter(date__gte=first_day_previous_month, date__lte=last_day_previous_month).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    recent_invoices = Invoice.objects.order_by('-date')[:10]
+    today = timezone.now().date()
+    today_payments = Payment.objects.filter(payment_date__date=today)[:10]
+    total_payment = today_payments.aggregate(total=Sum('amount'))['total'] or 0
+
 
     context = {
         "customers":customers,
-
+        "recent_invoices":recent_invoices,
+        "today_payments":today_payments,
+        "total_payment":total_payment,
         'total_invoices': total_invoices,
         'total_paid_amount': total_paid_amount,
         'total_amount': total_amount,

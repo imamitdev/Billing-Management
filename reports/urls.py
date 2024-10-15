@@ -7,5 +7,6 @@ urlpatterns = [
 
     path('profit-loss-report/', views.profit_loss_report ,name='profit_loss_report'),
     path('tax-report/', views.tax_report ,name='tax_report'),
+    path('today-payments-report/', views.today_payments_report ,name='today_payments_report'),
 
 ]
