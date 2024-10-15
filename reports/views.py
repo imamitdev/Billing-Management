@@ -116,3 +116,15 @@ def tax_report(request):
         'total_cgst': total_cgst,
     }
     return render(request, 'tax_report.html', context)
+
+def today_payments_report(request):
+    today = timezone.now().date()
+    payments = Payment.objects.filter(payment_date__date=today)
+    total_amount = payments.aggregate(total=Sum('amount'))['total'] or 0
+
+    context = {
+        'payments': payments,
+        'total_amount': total_amount,
+        'today': today,
+    }
+    return render(request, 'today_report.html', context)

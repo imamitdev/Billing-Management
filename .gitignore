@@ -74,4 +74,3 @@ staticfiles/
 *.swp
 *.swo
 *.DS_Store
-db.sqlite3

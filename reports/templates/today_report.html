@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-wrapper">
+    <div class="content container-fluid">
+
+        <div class="page-header">
+            <div class="row">
+                <div class="col">
+                    <h3 class="page-title">Sales Report</h3>
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url "home" %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Sales Report</li>
+                    </ul>
+                </div>
+                <div class="col-auto">
+                    <a href="#" class="btn btn-primary">
+                        <i class="fas fa-file-pdf"></i>
+                    </a>
+                    <a class="btn btn-primary filter-btn" href="javascript:void(0);" id="filter_search">
+                        <i class="fas fa-filter"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <form method="post" id="filter_inputs" class="card filter-card">
+            {% csrf_token %}
+            <div class="card-body pb-0">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>From</label>
+                            <div class="cal-icon">
+                                <input class="form-control datetimepicker" type="text" name="start_date" placeholder="DD-MM-YYYY" value="{{ request.POST.start_date }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>To</label>
+                            <div class="cal-icon">
+                                <input class="form-control datetimepicker" type="text" name="end_date" placeholder="DD-MM-YYYY" value="{{ request.POST.end_date }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary">Generate Report</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="row mt-3">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Sales Report</h4>
+                    </div>
+                    <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="datatable table table-stripped">
+                                    <thead>
+                                        <tr>
+                                            <th>Invoice</th>
+                                            <th>Amount</th>
+                                            <th>Payment Date</th>
+                                            <th>Payment Method</th>
+                                            <th>Note</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for payment in payments %}
+                                        <tr>
+                                            <td>#{{ payment.invoice.id }}</td>
+                                            <td>{{payment.amount }}</td>
+                                            <td>{{ payment.payment_date }}</td>
+                                            <td>{{payment.payment_method  }}</td>
+                                            <td>{{  payment.note  }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                              
+                                </table>
+                            </div>
+                      
+                    </div>
+                </div>
+            </div>
+        </div>
+
+      
+
+    </div>
+</div>
+
+<!-- JavaScript to initialize datepicker -->
+<script type="text/javascript">
+    $('.datetimepicker').datepicker({
+        format: 'dd-mm-yyyy',
+        autoclose: true,
+        todayHighlight: true
+    });
+</script>
+{% endblock content %}
