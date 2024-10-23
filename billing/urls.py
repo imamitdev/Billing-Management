@@ -23,6 +23,7 @@ urlpatterns = [
     path('import_products/', views.import_products, name='import_products'),
     path('payments/add/<int:invoice_id>/', views.add_payment, name='add_payment'),
     path('report/payments/', views.payment_report, name='payment_report'),
+    path('customer/<int:customer_id>/get/', views.customer_ledger, name='customer_get'),
 
 
 ]

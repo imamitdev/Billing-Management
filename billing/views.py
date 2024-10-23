@@ -348,3 +348,60 @@ def payment_report(request):
     return render(request, 'reports/payments.html', {
         'payments': payments
     })
+def customer_ledger(request, customer_id):
+    # Get the customer
+    customer = get_object_or_404(Customer, id=customer_id)
+    
+    # Get all invoices for the customer
+    invoices = Invoice.objects.filter(customer=customer)
+    
+    # Get all payments related to those invoices
+    payments = Payment.objects.filter(invoice__customer=customer)
+    
+    # Initialize total variables
+    total_invoiced = sum(invoice.total_amount for invoice in invoices)
+    total_paid = sum(payment.amount for payment in payments)
+    outstanding_balance = total_invoiced - total_paid
+
+    # Prepare ledger entries combining invoices and payments
+    ledger_entries = []
+    
+    for invoice in invoices:
+        ledger_entries.append({
+            'date': invoice.date,
+            'description': f"Invoice #{invoice.id}",
+            'debit': invoice.total_amount,
+            'credit': None,
+            'balance': None  # You can calculate running balance here
+        })
+
+    for payment in payments:
+        ledger_entries.append({
+            'date': payment.payment_date.date(),  # Convert datetime to date
+            'description': f"Payment #{payment.id} for Invoice #{payment.invoice.id}",
+            'debit': None,
+            'credit': payment.amount,
+            'balance': None  # You can calculate running balance here
+        })
+    
+    # Sort ledger entries by date (convert all to date)
+    ledger_entries.sort(key=lambda x: x['date'])
+
+    # Calculate running balance
+    running_balance = 0
+    for entry in ledger_entries:
+        if entry['debit']:
+            running_balance += entry['debit']
+        if entry['credit']:
+            running_balance -= entry['credit']
+        entry['balance'] = running_balance
+
+    context = {
+        'customer': customer,
+        'ledger_entries': ledger_entries,
+        'total_invoiced': total_invoiced,
+        'total_paid': total_paid,
+        'outstanding_balance': outstanding_balance,
+    }
+
+    return render(request, 'customer/customer-detail.html', context)
