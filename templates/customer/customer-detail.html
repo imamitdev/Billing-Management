@@ -1,33 +1,146 @@
+{% extends 'base.html' %}
+
+
 {% block content %}
-<h1>Customer Ledger: {{ customer.customer_name }}</h1>
-
-<table>
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Debit</th>
-            <th>Credit</th>
-            <th>Balance</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for entry in ledger_entries %}
-        <tr>
-            <td>{{ entry.date }}</td>
-            <td>{{ entry.description }}</td>
-            <td>{{ entry.debit|default:"-" }}</td>
-            <td>{{ entry.credit|default:"-" }}</td>
-            <td>{{ entry.balance }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<p>Total Invoiced: {{ total_invoiced }}</p>
-<p>Total Paid: {{ total_paid }}</p>
-<p>Outstanding Balance: {{ outstanding_balance }}</p>
-
+<div class="page-wrapper">
+    <div class="content container-fluid">
+      <div class="row justify-content-lg-center">
+        <div class="col-lg-10">
+  
+          <div class="page-header">
+            <div class="row">
+              <div class="col">
+                <h3 class="page-title">Profile - {{ customer.name }}</h3>
+                <ul class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'home' %}">Dashboard</a></li>
+                  <li class="breadcrumb-item active">Profile</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+  
+          <div class="profile-cover">
+            <div class="profile-cover-wrap">
+              <img class="profile-cover-img" src="assets/img/profiles/avatar-02.jpg" alt="Profile Cover">
+  
+              <div class="cover-content">
+                <div class="custom-file-btn">
+                  <input type="file" class="custom-file-btn-input" id="cover_upload">
+                  <label class="custom-file-btn-label btn btn-sm btn-white" for="cover_upload">
+                    <i class="fas fa-camera"></i>
+                    <span class="d-none d-sm-inline-block ms-1">Update Cover</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="text-center mb-5">
+            <label class="avatar avatar-xxl profile-cover-avatar" for="avatar_upload">
+              <img class="avatar-img" src="assets/img/profiles/avatar-02.jpg" alt="Profile Image">
+              <input type="file" id="avatar_upload">
+              <span class="avatar-edit">
+                <i data-feather="edit-2" class="avatar-uploader-icon shadow-soft"></i>
+              </span>
+            </label>
+            <h2>{{ customer.name }} 
+              <i class="fas fa-certificate text-primary small" data-toggle="tooltip" title="Verified"></i>
+            </h2>
+            <ul class="list-inline">
+              {% comment %} <li class="list-inline-item">
+                <i class="far fa-building"></i> <span>{{ customer.company }}</span>
+              </li> {% endcomment %}
+              <li class="list-inline-item">
+                <i class="fas fa-map-marker-alt"></i> {{ customer.address }}
+              </li>
+              {% comment %} <li class="list-inline-item">
+                <i class="far fa-calendar-alt"></i> <span>Joined {{ customer.joined_date }}</span>
+              </li> {% endcomment %}
+            </ul>
+          </div>
+  
+          <div class="row">
+            <div class="col-lg-4">
+              <div class="card card-body">
+                <h5>Complete your profile</h5>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="progress progress-md flex-grow-1">
+                    <div class="progress-bar bg-primary" role="progressbar" style="width: 30%" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div>
+                  <span class="ms-4">30%</span>
+                </div>
+              </div>
+  
+              <div class="card">
+                <div class="card-header">
+                  <h5 class="card-title d-flex justify-content-between">
+                    <span>Profile</span>
+                    <a class="btn btn-sm btn-white" href="{% url 'update_customer' customer.id  %}">Edit</a>
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <ul class="list-unstyled mb-0">
+                    <li class="py-0">
+                      <h6>About</h6>
+                    </li>
+                    <li>{{ customer.name }}</li>
+                    {% comment %} <li>{{ customer.company }}</li> {% endcomment %}
+                    <li class="pt-2 pb-0">
+                      <h6>Contacts</h6>
+                    </li>
+                    {% comment %} <li>{{ customer.email }}</li> {% endcomment %}
+                    {% comment %} <li>{{ customer.phone }}</li> {% endcomment %}
+                    <li class="pt-2 pb-0">
+                      <h6>Address</h6>
+                    </li>
+                    <li>{{ customer.address }}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+  
+            <div class="col-lg-8">
+              <div class="card">
+                <div class="card-header">
+                  <h5 class="card-title">Customer Ledger</h5>
+                </div>
+                <div class="card-body">
+                  <h6>Total Invoiced: {{ total_invoiced }}</h6>
+                  <h6>Total Paid: {{ total_paid }}</h6>
+                  <h6>Outstanding Balance: {{ outstanding_balance }}</h6>
+  
+                  <table class="table table-bordered mt-3">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Debit (Invoiced)</th>
+                        <th>Credit (Paid)</th>
+                        <th>Balance</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for entry in ledger_entries %}
+                      <tr>
+                        <td>{{ entry.date }}</td>
+                        <td>{{ entry.description }}</td>
+                        <td>{{ entry.debit|default_if_none:'' }}</td>
+                        <td>{{ entry.credit|default_if_none:'' }}</td>
+                        <td>{{ entry.balance }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+  
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 
 
 {% endblock content %}

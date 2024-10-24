@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from datetime import datetime
+from datetime import datetime,date
 
 
 
@@ -348,44 +348,54 @@ def payment_report(request):
     return render(request, 'reports/payments.html', {
         'payments': payments
     })
+
+
+
+
 def customer_ledger(request, customer_id):
     # Get the customer
     customer = get_object_or_404(Customer, id=customer_id)
     
     # Get all invoices for the customer
-    invoices = Invoice.objects.filter(customer=customer)
+    invoices = Invoice.objects.filter(customer=customer).only('id', 'date', 'total_amount')
     
     # Get all payments related to those invoices
-    payments = Payment.objects.filter(invoice__customer=customer)
+    payments = Payment.objects.filter(invoice__customer=customer).only('id', 'payment_date', 'amount', 'invoice')
     
-    # Initialize total variables
-    total_invoiced = sum(invoice.total_amount for invoice in invoices)
-    total_paid = sum(payment.amount for payment in payments)
+    # Initialize total variables using aggregate for performance
+    total_invoiced = invoices.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+    total_paid = payments.aggregate(Sum('amount'))['amount__sum'] or 0
     outstanding_balance = total_invoiced - total_paid
 
     # Prepare ledger entries combining invoices and payments
     ledger_entries = []
     
+    # Add entries for each invoice, followed by payments for that invoice
     for invoice in invoices:
+        # Add the invoice entry (Debit for the total invoiced amount)
         ledger_entries.append({
             'date': invoice.date,
             'description': f"Invoice #{invoice.id}",
-            'debit': invoice.total_amount,
+            'debit': invoice.total_amount,  # Total amount invoiced
             'credit': None,
-            'balance': None  # You can calculate running balance here
+            'balance': None  # Running balance to be calculated later
         })
 
-    for payment in payments:
-        ledger_entries.append({
-            'date': payment.payment_date.date(),  # Convert datetime to date
-            'description': f"Payment #{payment.id} for Invoice #{payment.invoice.id}",
-            'debit': None,
-            'credit': payment.amount,
-            'balance': None  # You can calculate running balance here
-        })
-    
-    # Sort ledger entries by date (convert all to date)
-    ledger_entries.sort(key=lambda x: x['date'])
+        # Get all payments made towards this invoice
+        invoice_payments = payments.filter(invoice=invoice)
+
+        # Add individual payment entries as credits below the invoice
+        for payment in invoice_payments:
+            ledger_entries.append({
+                'date': payment.payment_date.date(),  # Convert datetime to date
+                'description': f"Payment #{payment.id} for Invoice #{invoice.id}",
+                'debit': None,
+                'credit': payment.amount,
+                'balance': None  # Running balance to be calculated later
+            })
+
+    # Sort ledger entries by date
+    ledger_entries.sort(key=lambda x: x['date'] or date.min)
 
     # Calculate running balance
     running_balance = 0
