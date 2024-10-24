@@ -388,7 +388,7 @@ def customer_ledger(request, customer_id):
         for payment in invoice_payments:
             ledger_entries.append({
                 'date': payment.payment_date.date(),  # Convert datetime to date
-                'description': f"Payment #{payment.id} for Invoice #{invoice.id}",
+                'description': f" Invoice #{invoice.id}",
                 'debit': None,
                 'credit': payment.amount,
                 'balance': None  # Running balance to be calculated later
