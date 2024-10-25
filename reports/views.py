@@ -82,42 +82,47 @@ def expense_report(request):
     return render(request, 'expense.html', context)
 
 
-
-def profit_loss_report(request):
-    form = ReportForm(request.GET or None)
+def profit_and_loss_report(request):
     total_revenue = 0
     total_expenses = 0
-    profit_or_loss = 0
-    expenses = []
+    profit = 0
+    loss = 0
     invoices = []
+    expenses = []
 
     if request.method == 'POST':
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
-        start_date = timezone.datetime.strptime(start_date, '%d-%m-%Y')
-        end_date = timezone.datetime.strptime(end_date, '%d-%m-%Y')
 
-        # Total Revenue from Invoices
-        invoices = Invoice.objects.filter(date__range=[start_date, end_date])
-        total_revenue = invoices.aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+        # Convert string dates to datetime objects
+        start_date = timezone.datetime.strptime(start_date, '%d-%m-%Y').date()
+        end_date = timezone.datetime.strptime(end_date, '%d-%m-%Y').date()
 
-        # Total Expenses from the Expense model
-        expenses = Expense.objects.filter(date__range=[start_date, end_date])
-        total_expenses = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+        # Calculate total revenue from invoices
+        total_revenue = Invoice.objects.filter(date__range=(start_date, end_date)).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
 
-        # Profit or Loss calculation
-        profit_or_loss = total_revenue - total_expenses
+        # Calculate total expenses
+        total_expenses = Expense.objects.filter(date__range=(start_date, end_date)).aggregate(Sum('amount'))['amount__sum'] or 0
+
+        # Calculate profit and loss
+        if total_revenue > total_expenses:
+            profit = total_revenue - total_expenses
+        else:
+            loss = total_expenses - total_revenue
+
+        # Get list of invoices for display
+        invoices = Invoice.objects.filter(date__range=(start_date, end_date))
+        expenses = Expense.objects.filter(date__range=(start_date, end_date))
 
     context = {
-        'form': form,
-        'invoices': invoices,
-        'expenses': expenses,
         'total_revenue': total_revenue,
         'total_expenses': total_expenses,
-        'profit_or_loss': profit_or_loss,
+        'profit': profit,
+        'loss': loss,
+        'invoices': invoices,
+        'expenses': expenses,
     }
     return render(request, 'profit_loss_report.html', context)
-
 
 def tax_report(request):
     total_sgst = 0
