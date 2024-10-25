@@ -57,30 +57,27 @@ def sales_report(request):
 
 def expense_report(request):
     expenses = []
-    total_purchase = total_operational = total_other = total_expenses = 0
+    total_expense = 0
 
     if request.method == 'POST':
-        start_date = parse_date(request.POST.get('start_date'))
-        end_date = parse_date(request.POST.get('end_date'))
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
 
-        # Filter expenses by date range
-        expenses = Expense.objects.filter(date__range=[start_date, end_date])
+        # Convert string dates to datetime objects
+        start_date = timezone.datetime.strptime(start_date, '%d-%m-%Y').date()
+        end_date = timezone.datetime.strptime(end_date, '%d-%m-%Y').date()
 
-        # Aggregate totals by expense type
-        total_purchase = expenses.filter(expense_type='purchase').aggregate(Sum('amount'))['amount__sum'] or 0
-        total_operational = expenses.filter(expense_type='operational').aggregate(Sum('amount'))['amount__sum'] or 0
-        total_other = expenses.filter(expense_type='other').aggregate(Sum('amount'))['amount__sum'] or 0
-        total_expenses = total_purchase + total_operational + total_other
+        # Filter expenses within the specified date range
+        expenses = Expense.objects.filter(date__range=(start_date, end_date))
+
+        # Calculate total expenses
+        total_expense = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
 
     context = {
         'expenses': expenses,
-        'total_purchase': total_purchase,
-        'total_operational': total_operational,
-        'total_other': total_other,
-        'total_expenses': total_expenses,
+        'total_expense': total_expense,
     }
     return render(request, 'expense.html', context)
-
 
 def profit_and_loss_report(request):
     total_revenue = 0
@@ -125,22 +122,24 @@ def profit_and_loss_report(request):
     return render(request, 'profit_loss_report.html', context)
 
 def tax_report(request):
+    invoices = []
     total_sgst = 0
     total_cgst = 0
-    invoices = []
 
     if request.method == 'POST':
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
-        start_date = timezone.datetime.strptime(start_date, '%d-%m-%Y')
-        end_date = timezone.datetime.strptime(end_date, '%d-%m-%Y')   
 
-        # Filter Invoices based on date range
-        invoices = Invoice.objects.filter(date__range=[start_date, end_date])
+        # Convert string dates to datetime objects
+        start_date = timezone.datetime.strptime(start_date, '%d-%m-%Y').date()
+        end_date = timezone.datetime.strptime(end_date, '%d-%m-%Y').date()
+
+        # Filter invoices within the specified date range
+        invoices = Invoice.objects.filter(date__range=(start_date, end_date))
 
         # Calculate total SGST and CGST
-        total_sgst = invoices.aggregate(Sum('sgst'))['sgst__sum'] or 0
-        total_cgst = invoices.aggregate(Sum('cgst'))['cgst__sum'] or 0
+        total_sgst = invoices.aggregate(Sum('total_sgst'))['total_sgst__sum'] or 0
+        total_cgst = invoices.aggregate(Sum('total_cgst'))['total_cgst__sum'] or 0
 
     context = {
         'invoices': invoices,
@@ -149,6 +148,7 @@ def tax_report(request):
     }
     return render(request, 'tax_report.html', context)
 
+    
 def today_payments_report(request):
     today = timezone.now().date()
     payments = Payment.objects.filter(payment_date__date=today)

@@ -7,20 +7,23 @@
         <div class="page-header">
             <div class="row">
                 <div class="col">
-                    <h3 class="page-title">Profit & Loss Report</h3>
+                    <h3 class="page-title">Tax Report</h3>
                     <ul class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{% url "home" %}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Profit & Loss  Report</li>
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Tax Report</li>
                     </ul>
                 </div>
+
+
                 <div class="col-auto">
-                    <a href="#" class="btn btn-primary">
-                        <i class="fas fa-file-pdf"></i>
-                    </a>
-                    <a class="btn btn-primary filter-btn" href="javascript:void(0);" id="filter_search">
-                        <i class="fas fa-filter"></i>
-                    </a>
-                </div>
+                  <a href="#" class="btn btn-primary">
+                      <i class="fas fa-file-pdf"></i>
+                  </a>
+                  <a class="btn btn-primary filter-btn" href="javascript:void(0);" id="filter_search">
+                      <i class="fas fa-filter"></i>
+                  </a>
+              </div>
+
             </div>
         </div>
 
@@ -55,48 +58,55 @@
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Sales Report</h4>
+                        <h4 class="card-title">Tax Summary</h4>
                     </div>
                     <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="datatable table table-stripped">
-                                    <thead>
-                                        <tr>
-                                            <th>Invoice Number</th>
-                                            <th>Customer </th>
-
-                                            <th>Date</th>
-                                            <th>Total Amount</th>
-                                            <th>Paid Amount</th>
-                                            <th>SGST</th>
-                                            <th>CGST</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        {% for invoice in invoices %}
-                                        <tr>
-                                            <td>#{{ invoice.id }}</td>
-                                            <td>{{ invoice.customer.customer_name }}</td>
-
-                                            <td>{{ invoice.date }}</td>
-                                            <td>{{ invoice.total_amount }}</td>
-                                            <td>{{ invoice.paid_amount }}</td>
-                                            <td>{{ invoice.total_sgst }}</td>
-                                            <td>{{ invoice.total_cgst }}</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                              
-                                </table>
-                            </div>
-                      
+                        <p><strong>Total SGST Collected: </strong> ₹{{ total_sgst|floatformat:2 }}</p>
+                        <p><strong>Total CGST Collected: </strong> ₹{{ total_cgst|floatformat:2 }}</p>
                     </div>
                 </div>
             </div>
         </div>
 
-      
+        <div class="row mt-3">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Invoices with Taxes</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="datatable table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice Number</th>
+                                        <th>Customer</th>
+                                        <th>Date</th>
+                                        <th>Total SGST</th>
+                                        <th>Total CGST</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for invoice in invoices %}
+                                    <tr>
+                                        <td>#{{ invoice.id }}</td>
+                                        <td>{{ invoice.customer.customer_name }}</td>
+                                        <td>{{ invoice.date }}</td>
+                                        <td>₹{{ invoice.total_sgst|floatformat:2 }}</td>
+                                        <td>₹{{ invoice.total_cgst|floatformat:2 }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5">No invoices found for this date range.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 </div>
