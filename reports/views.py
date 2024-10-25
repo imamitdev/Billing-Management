@@ -160,3 +160,35 @@ def today_payments_report(request):
         'today': today,
     }
     return render(request, 'today_report.html', context)
+
+
+def due_and_paid_report(request):
+    invoices = []
+    total_paid_amount = 0
+    total_due_amount = 0
+
+    if request.method == 'POST':
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+
+        # Convert string dates to datetime objects
+        start_date = timezone.datetime.strptime(start_date, '%d-%m-%Y').date()
+        end_date = timezone.datetime.strptime(end_date, '%d-%m-%Y').date()
+
+        # Filter invoices within the specified date range
+        invoices = Invoice.objects.filter(date__range=(start_date, end_date))
+
+        # Calculate total paid and due amounts
+        total_paid_amount = sum(invoice.paid_amount for invoice in invoices)
+        total_due_amount = sum(invoice.total_amount - invoice.paid_amount for invoice in invoices)
+
+        # Calculate due amount for each invoice and add it to the invoice object
+        for invoice in invoices:
+            invoice.due_amount = invoice.total_amount - invoice.paid_amount
+
+    context = {
+        'invoices': invoices,
+        'total_paid_amount': total_paid_amount,
+        'total_due_amount': total_due_amount,
+    }
+    return render(request, 'due_and_paid_report.html', context)

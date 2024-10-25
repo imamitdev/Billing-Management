@@ -10,5 +10,6 @@ urlpatterns = [
 
     path('tax-report/', views.tax_report ,name='tax_report'),
     path('today-payments-report/', views.today_payments_report ,name='today_payments_report'),
+    path('due-and-paid-report/', views.due_and_paid_report, name='due_and_paid_report'),
 
 ]
