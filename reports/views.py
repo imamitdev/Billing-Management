@@ -4,7 +4,12 @@ from billing.models import Invoice, Payment,Expense,InvoiceItem
 from .forms import ReportForm
 from django.db.models import Sum
 from django.utils import timezone
+from datetime import datetime
 
+
+
+def parse_date(date_str):
+    return datetime.strptime(date_str, '%d-%m-%Y')
 def product_sale_report(request):
     product_sales = []
 
@@ -50,7 +55,31 @@ def sales_report(request):
     }
     return render(request, 'sales.html', context)
 
+def expense_report(request):
+    expenses = []
+    total_purchase = total_operational = total_other = total_expenses = 0
 
+    if request.method == 'POST':
+        start_date = parse_date(request.POST.get('start_date'))
+        end_date = parse_date(request.POST.get('end_date'))
+
+        # Filter expenses by date range
+        expenses = Expense.objects.filter(date__range=[start_date, end_date])
+
+        # Aggregate totals by expense type
+        total_purchase = expenses.filter(expense_type='purchase').aggregate(Sum('amount'))['amount__sum'] or 0
+        total_operational = expenses.filter(expense_type='operational').aggregate(Sum('amount'))['amount__sum'] or 0
+        total_other = expenses.filter(expense_type='other').aggregate(Sum('amount'))['amount__sum'] or 0
+        total_expenses = total_purchase + total_operational + total_other
+
+    context = {
+        'expenses': expenses,
+        'total_purchase': total_purchase,
+        'total_operational': total_operational,
+        'total_other': total_other,
+        'total_expenses': total_expenses,
+    }
+    return render(request, 'expense.html', context)
 
 
 
@@ -62,9 +91,11 @@ def profit_loss_report(request):
     expenses = []
     invoices = []
 
-    if form.is_valid():
-        start_date = form.cleaned_data['start_date']
-        end_date = form.cleaned_data['end_date']
+    if request.method == 'POST':
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        start_date = timezone.datetime.strptime(start_date, '%d-%m-%Y')
+        end_date = timezone.datetime.strptime(end_date, '%d-%m-%Y')
 
         # Total Revenue from Invoices
         invoices = Invoice.objects.filter(date__range=[start_date, end_date])
@@ -88,30 +119,26 @@ def profit_loss_report(request):
     return render(request, 'profit_loss_report.html', context)
 
 
-
 def tax_report(request):
-    
-    start_date = request.POST.get('start_date')
-    end_date = request.POST.get('end_date')
-    start_date = timezone.datetime.strptime(start_date, '%d-%m-%Y')
-    end_date = timezone.datetime.strptime(end_date, '%d-%m-%Y')
-
     total_sgst = 0
     total_cgst = 0
-    invoice_items = []
+    invoices = []
 
-   
+    if request.method == 'POST':
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+        start_date = timezone.datetime.strptime(start_date, '%d-%m-%Y')
+        end_date = timezone.datetime.strptime(end_date, '%d-%m-%Y')   
 
-
-        # Filter InvoiceItems based on invoice date range
-    invoice_items = InvoiceItem.objects.filter(invoice__date__range=[start_date, end_date])
+        # Filter Invoices based on date range
+        invoices = Invoice.objects.filter(date__range=[start_date, end_date])
 
         # Calculate total SGST and CGST
-    total_sgst = invoice_items.aggregate(Sum('sgst'))['sgst__sum'] or 0
-    total_cgst = invoice_items.aggregate(Sum('cgst'))['cgst__sum'] or 0
+        total_sgst = invoices.aggregate(Sum('sgst'))['sgst__sum'] or 0
+        total_cgst = invoices.aggregate(Sum('cgst'))['cgst__sum'] or 0
 
     context = {
-        'invoice_items': invoice_items,
+        'invoices': invoices,
         'total_sgst': total_sgst,
         'total_cgst': total_cgst,
     }
