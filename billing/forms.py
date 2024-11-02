@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product,Customer,InvoiceItem,Invoice,Payment
+from .models import Product,Customer,InvoiceItem,Invoice,Payment,Expense
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
@@ -37,7 +37,23 @@ class CustomerForm(forms.ModelForm):
 class ProductImportForm(forms.Form):
     file = forms.FileField()
     
-    
+class ExpenseForm(forms.ModelForm):
+    date = forms.DateTimeField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control datetimepicker',
+            'placeholder': 'YYYY-MM-DD HH:MM',
+        }),
+        input_formats=['%Y-%m-%d %H:%M', '%Y-%m-%d'],  # Accept both date and datetime formats
+    )
+
+    class Meta:
+        model = Expense
+        fields = ['expense_type', 'date', 'description', 'amount']  # Ensure 'invoice' is not included
+        widgets = {
+            "amount": forms.TextInput(attrs={"class": "form-control"}),
+            "expense_type": forms.Select(attrs={"class": "form-control"}),
+            'description': forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+        }
 
 class PaymentForm(forms.ModelForm):
     payment_date = forms.DateTimeField(

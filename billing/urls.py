@@ -25,5 +25,9 @@ urlpatterns = [
     path('report/payments/', views.payment_report, name='payment_report'),
     path('customer/<int:customer_id>/get/', views.customer_ledger, name='customer_get'),
 
+    path('expense/', views.expense_list ,name='expense_list'),
+    path('edit-expense/', views.edit_expense, name='edit_expense'),
+
+    path('delete-expense/', views.delete_expense, name='delete_expense'),
 
 ]

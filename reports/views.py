@@ -192,3 +192,6 @@ def due_and_paid_report(request):
         'total_due_amount': total_due_amount,
     }
     return render(request, 'due_and_paid_report.html', context)
+
+
+    

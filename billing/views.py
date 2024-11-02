@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product,Customer,Invoice,InvoiceItem,Payment
+from .models import Product,Customer,Invoice,InvoiceItem,Payment,Expense
 from decimal import Decimal
 import csv
 
 from django.db.models import Sum, F
 
-from .forms import ProductForm,CustomerForm,ProductImportForm,PaymentForm
+from .forms import ProductForm,CustomerForm,ProductImportForm,PaymentForm,ExpenseForm
 from django.contrib import messages
 from django.http import JsonResponse
 import json
@@ -415,3 +415,55 @@ def customer_ledger(request, customer_id):
     }
 
     return render(request, 'customer/customer-detail.html', context)
+
+@login_required(login_url="login")
+def expense_list(request):
+    expense = Expense.objects.all()
+
+    if request.method == 'POST':
+        expense_id = request.POST.get('expense_id')
+        if expense_id:
+            # Edit existing product
+            expense = get_object_or_404(Expense, pk=expense_id)
+            form = ExpenseForm(request.POST, instance=expense)
+        else:
+            # Create new product
+            form = ExpenseForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('expense_list')  # Redirect to the list after saving
+    else:
+        form = ExpenseForm()  # Empty form for new product
+
+    return render(request, 'billing/expense_list.html', { "expense":expense,'form': form})
+
+
+
+@login_required(login_url="login")
+def edit_expense(request):
+    if request.method == 'POST':
+        expense_id = request.POST.get('expense_id')
+        exp = get_object_or_404(Expense, id=expense_id)
+
+        exp.expense_type = request.POST.get('expense_type')
+        exp.date = request.POST.get('date')
+        exp.description = request.POST.get('description')
+        exp.amount = request.POST.get('amount')
+    
+        
+        exp.save()
+        messages.success(request, 'Expense updated successfully!')
+        return redirect('expense_list')
+
+@login_required(login_url="login")
+def delete_expense(request):
+    if request.method == 'POST':
+        expense_id = request.POST.get('expense_id')
+        exp = get_object_or_404(Expense, id=expense_id)
+
+        # Delete the product
+        exp.delete()
+        return redirect('expense_list')
+
+    return redirect('expense_list')
