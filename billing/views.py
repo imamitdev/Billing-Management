@@ -208,7 +208,7 @@ def invoice_list(request):
     )
 
     # Filter invoices where the due amount is greater than 0
-    invoices_with_due = invoices.filter(due_amount__gt=0)
+    invoices_with_due = invoices.filter(due_amount__gt=0).order_by('-id')
 
     
 
